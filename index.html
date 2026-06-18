@@ -720,6 +720,80 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(18, 140, 126, 0.5);
         }
+
+        /* Banner de Utilidades del Vendedor */
+        .banner-vendedor {
+            background: linear-gradient(135deg, #075E54 0%, #128C7E 100%);
+            color: white;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            box-shadow: 0 4px 15px rgba(18, 140, 126, 0.25);
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 1500;
+            position: sticky;
+            top: 10px;
+            border-bottom: 2px solid #25D366;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            animation: slideDownIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .banner-vendedor .info-seccion {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .banner-vendedor .badge-vendedor {
+            background: #25D366;
+            color: #075E54;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .banner-vendedor .btn-accion-vendedor {
+            background: white;
+            color: #075E54;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            text-decoration: none;
+        }
+        .banner-vendedor .btn-accion-vendedor:hover {
+            background: #25D366;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+        }
+        .banner-vendedor .btn-cerrar-vendedor {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 4px;
+        }
+        .banner-vendedor .btn-cerrar-vendedor:hover {
+            color: white;
+        }
+        @keyframes slideDownIn {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
         @keyframes pulsoFlotante {
             0% {
                 box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
@@ -922,6 +996,7 @@
 </head>
 <body>
 <div class="app-container">
+    <div id="bannerVendedorContainer"></div>
     <div class="header" style="position: relative;">
         <button class="btn-configuracion" onclick="abrirConfiguracion()" title="Configuración de Google Sheets">
             <i class="fa-solid fa-gear"></i>
@@ -1363,6 +1438,7 @@ function doGet(e) {
                         inputDireccion.value = cliente.direccion || '';
                         inputContacto.value = cliente.contacto || '';
                         dropdown.style.display = 'none';
+                        mostrarBannerVendedor(cliente.cliente, cliente.telefonos);
                     });
                     dropdown.appendChild(item);
                 });
@@ -1387,9 +1463,16 @@ function doGet(e) {
     function cargarClienteDesdeURL() {
         const urlParams = new URLSearchParams(window.location.search);
         const clienteParam = urlParams.get('cliente');
+        const telefonoParam = urlParams.get('telefono');
+        const direccionParam = urlParams.get('direccion');
+        const contactoParam = urlParams.get('contacto');
+        
+        let FinalNombre = "";
+        let FinalTelefono = "";
         
         if (clienteParam) {
             const decodedParam = decodeURIComponent(clienteParam).trim();
+            FinalNombre = decodedParam;
             const inputNombre = document.getElementById('txtNombre');
             const inputTelefono = document.getElementById('txtTelefono');
             const inputDireccion = document.getElementById('txtDireccion');
@@ -1407,12 +1490,95 @@ function doGet(e) {
                 if (inputDireccion) inputDireccion.value = match.direccion || '';
                 if (inputContacto) inputContacto.value = match.contacto || '';
                 
+                FinalNombre = match.cliente;
+                FinalTelefono = match.telefonos || '';
+                
                 // Guardar en localStorage para mantener coherencia
                 localStorage.setItem('bonappetit_nombre', match.cliente);
                 localStorage.setItem('bonappetit_telefono', match.telefonos || '');
             } else {
                 localStorage.setItem('bonappetit_nombre', decodedParam);
             }
+            
+            // Procesar parámetros extra de la URL si se especifican directamente
+            if (telefonoParam) {
+                const decTel = decodeURIComponent(telefonoParam).trim();
+                if (inputTelefono) inputTelefono.value = decTel;
+                FinalTelefono = decTel;
+                localStorage.setItem('bonappetit_telefono', decTel);
+            }
+            if (direccionParam) {
+                const decDir = decodeURIComponent(direccionParam).trim();
+                if (inputDireccion) inputDireccion.value = decDir;
+            }
+            if (contactoParam) {
+                const decCont = decodeURIComponent(contactoParam).trim();
+                if (inputContacto) inputContacto.value = decCont;
+            }
+            
+            // Mostrar hermoso de una vez el Banner de Utilidades del Vendedor
+            mostrarBannerVendedor(FinalNombre, FinalTelefono);
+        }
+    }
+
+    function mostrarBannerVendedor(nombre, telefono) {
+        const contenedor = document.getElementById('bannerVendedorContainer');
+        if (!contenedor) return;
+        
+        let telLimpio = "";
+        if (telefono) {
+            telLimpio = telefono.replace(/[^0-9]/g, '');
+        }
+        
+        if (telLimpio && telLimpio.startsWith('0')) {
+            telLimpio = '58' + telLimpio.substring(1);
+        } else if (telLimpio && !telLimpio.startsWith('58') && telLimpio.length <= 11) {
+            telLimpio = '58' + telLimpio;
+        }
+        
+        const urlBase = `${window.location.origin}${window.location.pathname}`;
+        const urlCatalogo = `${urlBase}?cliente=${encodeURIComponent(nombre)}`;
+        
+        let mensajeParaCompartir = `*BON APPETIT · EL GUSTAZO* 🌿\n\n`;
+        mensajeParaCompartir += `Estimado(a) *${nombre}*,\n`;
+        mensajeParaCompartir += `Le comparto el enlace directo a nuestro catálogo digital personalizado para que pueda armar y enviarnos su pedido cómodamente:\n\n`;
+        mensajeParaCompartir += `🔗 *Catálogo:* ${urlCatalogo}\n\n`;
+        mensajeParaCompartir += `¡Quedamos atentos a su orden!`;
+        
+        const mensajeCodificado = encodeURIComponent(mensajeParaCompartir);
+        
+        let enlaceWhatsApp = "";
+        let textoBoton = "";
+        if (telLimpio) {
+            enlaceWhatsApp = `https://wa.me/${telLimpio}?text=${mensajeCodificado}`;
+            textoBoton = `Enviar Catálogo a ${nombre}`;
+        } else {
+            enlaceWhatsApp = `https://api.whatsapp.com/send?text=${mensajeCodificado}`;
+            textoBoton = `Compartir Catálogo`;
+        }
+        
+        contenedor.innerHTML = `
+            <div class="banner-vendedor">
+                <div class="info-seccion">
+                    <span class="badge-vendedor">Vendedor</span>
+                    <span>¿Enviar catálogo personalizado a <strong>${escapeHtml(nombre)}</strong>?</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <a href="${enlaceWhatsApp}" target="_blank" class="btn-accion-vendedor">
+                        <i class="fa-brands fa-whatsapp"></i> ${textoBoton}
+                    </a>
+                    <button class="btn-cerrar-vendedor" onclick="cerrarBannerVendedor()" title="Cerrar">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    function cerrarBannerVendedor() {
+        const contenedor = document.getElementById('bannerVendedorContainer');
+        if (contenedor) {
+            contenedor.innerHTML = '';
         }
     }
 
