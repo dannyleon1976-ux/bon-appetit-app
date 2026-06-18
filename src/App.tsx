@@ -69,6 +69,25 @@ export default function App() {
     }
   }, []);
 
+  // Sync client profile fields withclientesList if URL query parameter is present on load
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlCliente = params.get("cliente");
+    if (urlCliente && clientesList.length > 0) {
+      const decodedHost = decodeURIComponent(urlCliente).trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const match = clientesList.find(c => {
+        const clientNorm = c.cliente.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        return clientNorm === decodedHost;
+      });
+      if (match) {
+        setNombre(match.cliente);
+        if (match.telefonos) setTelefono(match.telefonos);
+        if (match.direccion) setDireccion(match.direccion);
+        if (match.contacto) setContacto(match.contacto);
+      }
+    }
+  }, [clientesList]);
+
   // Sync Input modifications with localStorage
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.CLIENT_NAME, nombre);
