@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { User, Phone, MapPin, UserCheck, Truck, ClipboardList } from "lucide-react";
+import { User, Phone, MapPin, UserCheck, Truck, ClipboardList, MessageCircle } from "lucide-react";
 import { Client } from "../types";
 
 interface ClienteFormProps {
@@ -139,10 +139,30 @@ export default function ClienteForm({
       {/* Two column Grid - Phone & Address */}
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="flex items-center gap-2 text-[10px] font-extrabold uppercase text-[#3e2723] tracking-wide mb-2">
-            <Phone className="w-3.5 h-3.5 text-amber-600" />
-            Teléfono / WhatsApp
-          </label>
+          <div className="flex justify-between items-center mb-2">
+            <label className="flex items-center gap-2 text-[10px] font-extrabold uppercase text-[#3e2723] tracking-wide">
+              <Phone className="w-3.5 h-3.5 text-amber-600" />
+              Teléfono / WhatsApp
+            </label>
+            {telefono && telefono.replace(/\D/g, "").length >= 10 && (
+              <a
+                href={`https://wa.me/${
+                  telefono.replace(/\D/g, "").startsWith("0") && telefono.replace(/\D/g, "").length === 11
+                    ? "58" + telefono.replace(/\D/g, "").substring(1)
+                    : telefono.replace(/\D/g, "").length === 10
+                    ? "58" + telefono.replace(/\D/g, "")
+                    : telefono.replace(/\D/g, "")
+                }`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-[9px] font-black transition-all shadow-sm hover:shadow-md animate-bounce"
+                title="Abrir chat de WhatsApp Directo"
+              >
+                <MessageCircle className="w-2.5 h-2.5" />
+                <span>WhatsApp</span>
+              </a>
+            )}
+          </div>
           <input
             id="txtTelefono"
             type="tel"
