@@ -620,6 +620,85 @@
         .observaciones-field {
             margin-top: 8px;
         }
+        .aux-buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .btn-limpiar, .btn-restablecer {
+            flex: 1;
+            padding: 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(220, 38, 38, 0.15);
+        }
+        .btn-limpiar {
+            background: #fff5f5;
+            color: #dc2626;
+        }
+        .btn-limpiar:hover {
+            background: #fee2e2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+        }
+        .btn-restablecer {
+            background: #fafaf9;
+            color: #44403c;
+            border-color: #e7e5e4;
+        }
+        .btn-restablecer:hover {
+            background: #f5f5f4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(68, 64, 60, 0.05);
+        }
+        
+        /* Botón flotante de WhatsApp */
+        .btn-flotante-whatsapp {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+            cursor: pointer;
+            z-index: 2000;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            animation: pulsoFlotante 2s infinite;
+        }
+        .btn-flotante-whatsapp:hover {
+            transform: scale(1.1) translateY(-3px);
+            box-shadow: 0 10px 28px rgba(37, 211, 102, 0.55);
+            color: white !important;
+        }
+        .btn-flotante-whatsapp:active {
+            transform: scale(0.95);
+        }
+        @keyframes pulsoFlotante {
+            0% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -684,9 +763,22 @@
         <button class="btn-whatsapp" onclick="enviarPedidoWhatsApp()">
             <i class="fa-brands fa-whatsapp fa-lg"></i> Enviar Pedido por WhatsApp
         </button>
+        <div class="aux-buttons-container">
+            <button class="btn-limpiar" onclick="limpiarFormulario()">
+                <i class="fa-regular fa-trash-can"></i> Limpiar Todo
+            </button>
+            <button class="btn-restablecer" onclick="restablecerAplicacion()">
+                <i class="fa-solid fa-arrow-rotate-left"></i> Restablecer App
+            </button>
+        </div>
     </div>
 </div>
 <div class="cache-badge" id="cacheBadge" style="display: none;">📦 Carga instantánea</div>
+
+<!-- Botón Flotante de WhatsApp -->
+<a href="https://wa.me/584125820897?text=Hola%2C%20quisiera%20hacer%20una%20consulta%20sobre%20los%20productos." target="_blank" class="btn-flotante-whatsapp" id="btnFlotanteWhatsApp" title="Contactar por WhatsApp">
+    <i class="fa-brands fa-whatsapp"></i>
+</a>
 
 <script>
     // ========== CONFIGURACIÓN ==========
@@ -718,6 +810,11 @@
     function normalizarTexto(str) {
         if (!str) return '';
         return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    function normalizarExtremo(str) {
+        if (!str) return '';
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
     }
 
     function generarIdProducto(categoria, nombre, precio) {
@@ -781,12 +878,57 @@
         }
     }
 
+    async function sincronizarClientesEnSegundoPlano() {
+        try {
+            const respuesta = await fetch(CLIENTES_URL);
+            if (respuesta.ok) {
+                const texto = await respuesta.text();
+                const jsonLimpio = texto.match(/google\.visualization\.Query\.setResponse\((.+)\)/);
+                if (jsonLimpio) {
+                    const jsonPuro = JSON.parse(jsonLimpio[1]);
+                    const filas = jsonPuro.table.rows;
+                    const nuevosClientes = [];
+                    for (let i = 0; i < filas.length; i++) {
+                        const fila = filas[i];
+                        if (!fila || !fila.c) continue;
+                        const id = fila.c[0] ? fila.c[0].v : null;
+                        const cliente = fila.c[1] ? fila.c[1].v : null;
+                        const rifCedula = fila.c[2] ? fila.c[2].v : null;
+                        const direccion = fila.c[3] ? fila.c[3].v : null;
+                        const telefonos = fila.c[4] ? fila.c[4].v : null;
+                        const contacto = fila.c[5] ? fila.c[5].v : null;
+                        if (cliente) {
+                            nuevosClientes.push({
+                                id: id || '',
+                                cliente: cliente,
+                                rifCedula: rifCedula || '',
+                                direccion: direccion || '',
+                                telefonos: telefonos || '',
+                                contacto: contacto || ''
+                            });
+                        }
+                    }
+                    listaClientes = nuevosClientes;
+                    localStorage.setItem(CLIENTES_CACHE_KEY, JSON.stringify(listaClientes));
+                    localStorage.setItem(CLIENTES_CACHE_TIME_KEY, Date.now());
+                    console.log('✅ Clientes sincronizados en segundo plano:', listaClientes.length);
+                    // Actualizar campos si hay parametro cliente en URL para que autocomplete de una vez
+                    cargarClienteDesdeURL();
+                }
+            }
+        } catch (e) {
+            console.warn('Falla silenciosa al sincronizar clientes:', e);
+        }
+    }
+
     async function cargarClientes() {
         const cache = localStorage.getItem(CLIENTES_CACHE_KEY);
         const cacheTime = localStorage.getItem(CLIENTES_CACHE_TIME_KEY);
         if (cache && cacheTime && (Date.now() - parseInt(cacheTime) < CACHE_DURATION)) {
             listaClientes = JSON.parse(cache);
             console.log('📦 Clientes cargados desde caché:', listaClientes.length);
+            // Sincronizar silenciosamente en segundo plano
+            sincronizarClientesEnSegundoPlano();
             return;
         }
         try {
@@ -798,28 +940,29 @@
             const jsonPuro = JSON.parse(jsonLimpio[1]);
             const filas = jsonPuro.table.rows;
             listaClientes = [];
-            for (let i = 1; i < filas.length; i++) {
+            for (let i = 0; i < filas.length; i++) {
                 const fila = filas[i];
+                if (!fila || !fila.c) continue;
                 const id = fila.c[0] ? fila.c[0].v : null;
                 const cliente = fila.c[1] ? fila.c[1].v : null;
                 const rifCedula = fila.c[2] ? fila.c[2].v : null;
                 const direccion = fila.c[3] ? fila.c[3].v : null;
                 const telefonos = fila.c[4] ? fila.c[4].v : null;
                 const contacto = fila.c[5] ? fila.c[5].v : null;
-                if (cliente && telefonos) {
+                if (cliente) {
                     listaClientes.push({
                         id: id || '',
                         cliente: cliente,
                         rifCedula: rifCedula || '',
                         direccion: direccion || '',
-                        telefonos: telefonos,
+                        telefonos: telefonos || '',
                         contacto: contacto || ''
                     });
                 }
             }
             localStorage.setItem(CLIENTES_CACHE_KEY, JSON.stringify(listaClientes));
             localStorage.setItem(CLIENTES_CACHE_TIME_KEY, Date.now());
-            console.log('✅ Clientes cargados:', listaClientes.length);
+            console.log('✅ Clientes cargados (inicial):', listaClientes.length);
         } catch (error) {
             console.error("Error al cargar clientes:", error);
         }
@@ -882,14 +1025,32 @@
     // ========== DETECTAR CLIENTE DESDE LA URL ==========
     function cargarClienteDesdeURL() {
         const urlParams = new URLSearchParams(window.location.search);
-        const cliente = urlParams.get('cliente');
+        const clienteParam = urlParams.get('cliente');
         
-        if (cliente) {
+        if (clienteParam) {
+            const decodedParam = decodeURIComponent(clienteParam).trim();
             const inputNombre = document.getElementById('txtNombre');
+            const inputTelefono = document.getElementById('txtTelefono');
+            const inputDireccion = document.getElementById('txtDireccion');
+            const inputContacto = document.getElementById('txtContacto');
+            
             if (inputNombre) {
-                inputNombre.value = decodeURIComponent(cliente);
-                // Disparar evento para activar autocompletado
-                inputNombre.dispatchEvent(new Event('input'));
+                inputNombre.value = decodedParam;
+            }
+            
+            const normalizedParam = normalizarExtremo(decodedParam);
+            const match = listaClientes.find(c => normalizarExtremo(c.cliente) === normalizedParam);
+            if (match) {
+                if (inputNombre) inputNombre.value = match.cliente;
+                if (inputTelefono) inputTelefono.value = match.telefonos || '';
+                if (inputDireccion) inputDireccion.value = match.direccion || '';
+                if (inputContacto) inputContacto.value = match.contacto || '';
+                
+                // Guardar en localStorage para mantener coherencia
+                localStorage.setItem('bonappetit_nombre', match.cliente);
+                localStorage.setItem('bonappetit_telefono', match.telefonos || '');
+            } else {
+                localStorage.setItem('bonappetit_nombre', decodedParam);
             }
         }
     }
@@ -1263,6 +1424,17 @@
         const mensajeCodificado = encodeURIComponent(mensaje);
         const numeroTelefono = "584125820897";
         window.open(`https://wa.me/${numeroTelefono}?text=${mensajeCodificado}`, '_blank');
+        ejecutarLimpiezaFormulario();
+        alert("✅ Pedido enviado correctamente.\n\nEl formulario se ha reiniciado para el próximo pedido.");
+    }
+
+    function limpiarFormulario() {
+        if (confirm("⚠️ ¿Estás seguro de que deseas vaciar el carrito y limpiar todos los datos del formulario?")) {
+            ejecutarLimpiezaFormulario();
+        }
+    }
+
+    function ejecutarLimpiezaFormulario() {
         carrito = {};
         totalGeneral = 0;
         guardarCarrito();
@@ -1289,7 +1461,13 @@
             flecha.style.transform = 'rotate(0deg)';
         });
         acordeonesAbiertos.clear();
-        alert("✅ Pedido enviado correctamente.\n\nEl formulario se ha reiniciado para el próximo pedido.");
+    }
+
+    function restablecerAplicacion() {
+        if (confirm("⚠️ ¿Estás seguro de que deseas restablecer la aplicación? Se eliminarán todos los datos guardados en este navegador, incluyendo el carrito, caché de productos, clientes y configuraciones.")) {
+            localStorage.clear();
+            window.location.reload();
+        }
     }
 
     window.onload = async () => {

@@ -22,6 +22,15 @@ const STORAGE_KEYS = {
 
 const CACHE_DURATION = 3600000; // 1 hour in ms
 
+const normalizarParaComparar = (texto: string) => {
+  return texto
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]/g, "");
+};
+
 export default function App() {
   // Client States
   const [nombre, setNombre] = useState("");
@@ -61,30 +70,37 @@ export default function App() {
     if (savedPhone) setTelefono(savedPhone);
 
     // Read URL Parameters for routing / pre-fill triggers (e.g. ?cliente=Nombre)
-    const params = new URLSearchParams(window.location.search);
-    const urlCliente = params.get("cliente");
-    if (urlCliente) {
-      const decoded = decodeURIComponent(urlCliente);
-      setNombre(decoded);
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const urlCliente = params.get("cliente");
+      if (urlCliente) {
+        setNombre(urlCliente);
+      }
+    } catch (e) {
+      console.error("Error reading initial client parameter:", e);
     }
   }, []);
 
-  // Sync client profile fields withclientesList if URL query parameter is present on load
+  // Sync client profile fields with clientesList if URL query parameter is present on load/updates
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const urlCliente = params.get("cliente");
-    if (urlCliente && clientesList.length > 0) {
-      const decodedHost = decodeURIComponent(urlCliente).trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      const match = clientesList.find(c => {
-        const clientNorm = c.cliente.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        return clientNorm === decodedHost;
-      });
-      if (match) {
-        setNombre(match.cliente);
-        if (match.telefonos) setTelefono(match.telefonos);
-        if (match.direccion) setDireccion(match.direccion);
-        if (match.contacto) setContacto(match.contacto);
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const urlCliente = params.get("cliente");
+      if (urlCliente && clientesList.length > 0) {
+        const decodedHost = normalizarParaComparar(urlCliente);
+        const match = clientesList.find(c => {
+          const clientNorm = normalizarParaComparar(c?.cliente || "");
+          return clientNorm === decodedHost;
+        });
+        if (match) {
+          setNombre(match.cliente || "");
+          if (match.telefonos) setTelefono(match.telefonos);
+          if (match.direccion) setDireccion(match.direccion);
+          if (match.contacto) setContacto(match.contacto);
+        }
       }
+    } catch (e) {
+      console.error("Error matching client from URL:", e);
     }
   }, [clientesList]);
 
@@ -97,6 +113,51 @@ export default function App() {
     localStorage.setItem(STORAGE_KEYS.CLIENT_PHONE, telefono);
   }, [telefono]);
 
+  // Silent background sync for clients list to bypass stale cache issues
+  const sincronizarClientesEnSegundoPlano = async () => {
+    try {
+      const res = await fetch(CLIENTES_URL);
+      if (res.ok) {
+        const text = await res.text();
+        const match = text.match(/google\.visualization\.Query\.setResponse\((.+)\)/);
+        if (match) {
+          const parsed = JSON.parse(match[1]);
+          const rows = parsed.table.rows;
+          const parsedClients: Client[] = [];
+
+          for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            if (!row || !row.c) continue;
+
+            const id = row.c[0] ? String(row.c[0].v) : "";
+            const clientName = row.c[1] ? String(row.c[1].v) : "";
+            const rifCedula = row.c[2] ? String(row.c[2].v) : "";
+            const clientDir = row.c[3] ? String(row.c[3].v) : "";
+            const clientTel = row.c[4] ? String(row.c[4].v) : "";
+            const clientContact = row.c[5] ? String(row.c[5].v) : "";
+
+            if (clientName) {
+              parsedClients.push({
+                id,
+                cliente: clientName,
+                rifCedula,
+                direccion: clientDir,
+                telefonos: clientTel || "",
+                contacto: clientContact || "",
+              });
+            }
+          }
+          setClientesList(parsedClients);
+          localStorage.setItem(STORAGE_KEYS.CLIENTS_CACHE, JSON.stringify(parsedClients));
+          localStorage.setItem(STORAGE_KEYS.CLIENTS_CACHE_TIME, String(Date.now()));
+          console.log("Clientes sincronizados silenciosamente en segundo plano");
+        }
+      }
+    } catch (e) {
+      console.warn("Falla silenciosa al sincronizar clientes:", e);
+    }
+  };
+
   // 2. Fetch Clients & Autocomplete details
   const cargarClientes = async () => {
     const cachedClients = localStorage.getItem(STORAGE_KEYS.CLIENTS_CACHE);
@@ -104,6 +165,7 @@ export default function App() {
 
     if (cachedClients && cachedTime && (Date.now() - parseInt(cachedTime) < CACHE_DURATION)) {
       setClientesList(JSON.parse(cachedClients));
+      sincronizarClientesEnSegundoPlano();
       return;
     }
 
@@ -118,7 +180,7 @@ export default function App() {
       const rows = parsed.table.rows;
       const parsedClients: Client[] = [];
 
-      for (let i = 1; i < rows.length; i++) {
+      for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
         if (!row || !row.c) continue;
 
@@ -129,14 +191,14 @@ export default function App() {
         const clientTel = row.c[4] ? String(row.c[4].v) : "";
         const clientContact = row.c[5] ? String(row.c[5].v) : "";
 
-        if (clientName && clientTel) {
+        if (clientName) {
           parsedClients.push({
             id,
             cliente: clientName,
             rifCedula,
             direccion: clientDir,
-            telefonos: clientTel,
-            contacto: clientContact,
+            telefonos: clientTel || "",
+            contacto: clientContact || "",
           });
         }
       }
