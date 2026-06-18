@@ -1,0 +1,6 @@
+{
+  "name": "Bon Appetit - Catálogo de Especias",
+  "description": "Catálogo de especias y condimentos con autocompletado de clientes y generación de pedidos mediante WhatsApp.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

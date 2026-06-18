@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Bon Appetit - Catálogo de Especias</title>
+    
+    <link rel="apple-touch-icon" href="icono.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icono.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icono.png">
+    
+    <meta name="theme-color" content="#daa520">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-crema: #fff8eb;
+            --text-dark: #3e2723;
+            --dorado: #daa520;
+            --dorado-dark: #b8860b;
+            --dorado-claro: #f5deb3;
+            --blanco: #ffffff;
+            --gris-claro: #faf7f0;
+            --shadow-soft: 0 8px 30px rgba(62, 39, 35, 0.06);
+            --shadow-gold: 0 8px 20px rgba(218, 165, 32, 0.15);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { 
+            background: linear-gradient(135deg, var(--gris-claro) 0%, #f0ebe3 100%);
+            color: var(--text-dark); 
+            padding: 24px 12px; 
+            display: flex; 
+            justify-content: center; 
+            min-height: 100vh;
+        }
+        .app-container { 
+            width: 100%; 
+            max-width: 480px; 
+            background-color: var(--blanco); 
+            border-radius: 32px; 
+            box-shadow: var(--shadow-soft), 0 4px 12px rgba(0,0,0,0.02); 
+            overflow: visible; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .app-container:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 40px rgba(0, 0, 0, 0.12);
+        }
+        .header { 
+            text-align: center; 
+            padding: 16px 16px 20px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: linear-gradient(135deg, #fffbf5 0%, #fff5e6 100%);
+            margin-bottom: 8px;
+            overflow: hidden;
+            border-top-left-radius: 32px;
+            border-top-right-radius: 32px;
+            border-bottom-left-radius: 32px;
+            border-bottom-right-radius: 32px;
+            box-shadow: 0 4px 20px rgba(62, 39, 35, 0.04);
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .header.scrolled {
+            padding: 8px 16px 12px 16px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 10px 30px rgba(62, 39, 35, 0.08), 
+                        0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=600&q=80');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15; 
+            z-index: 1;
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
+            pointer-events: none;
+            transform: translate3d(0, 0, 0);
+        }
+        .header.scrolled::before {
+            opacity: 0.04;
+        }
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--dorado), var(--dorado-claro), var(--dorado));
+            z-index: 2;
+        }
+        .logo-insignia {
+            position: relative;
+            z-index: 3; 
+            width: 100%;
+            max-width: 480px;
+            height: auto;
+            aspect-ratio: 1 / 1;
+            object-fit: contain;
+            display: block;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            margin-top: -20.4%;
+            margin-bottom: -20.2%;
+            filter: drop-shadow(0 14px 24px rgba(62, 39, 35, 0.25));
+            animation: floatLogo 4s ease-in-out infinite;
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .header.scrolled .logo-insignia {
+            max-width: 65px;
+            margin-top: 2px !important;
+            margin-bottom: 2px !important;
+            filter: drop-shadow(0 4px 10px rgba(62, 39, 35, 0.1)) 
+                    drop-shadow(0 0 12px rgba(218, 165, 32, 0.5));
+            animation-play-state: paused;
+        }
+        @keyframes floatLogo {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+        .logo-insignia:hover {
+            transform: scale(1.03);
+        }
+        .header h1 { 
+            position: relative; 
+            z-index: 3; 
+            font-family: 'Playfair Display', serif; 
+            font-size: 28px; 
+            background: linear-gradient(135deg, var(--text-dark) 0%, #5a3e2b 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800; 
+            letter-spacing: -0.5px;
+            line-height: 1.05;
+            margin: -118px 0 2px 0;
+        }
+        .header.scrolled h1 {
+            margin-top: 4px;
+            font-size: 21px;
+        }
+        .header p { 
+            position: relative; 
+            z-index: 3; 
+            font-size: 11px; 
+            color: var(--dorado-dark); 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            margin-top: -1px;
+        }
+        .header.scrolled p {
+            font-size: 9px;
+            margin-top: 2px;
+        }
+        .header-slogan {
+            position: relative;
+            z-index: 3;
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            font-style: italic;
+            color: #5d4037;
+            font-weight: 600;
+            margin: 22px auto 12px auto;
+            max-width: 550px;
+            text-align: center;
+            line-height: 1.6;
+            opacity: 1;
+            max-height: 120px;
+            padding: 12px 14px;
+            border-top: 1px solid rgba(17, 17, 17, 1);
+            border-bottom: 1px solid rgba(17, 17, 17, 1);
+            letter-spacing: 0.3px;
+            overflow: hidden;
+            pointer-events: none;
+            text-transform: none;
+        }
+        .header.scrolled .header-slogan {
+            opacity: 0;
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+            border-top-color: transparent;
+            border-bottom-color: transparent;
+        }
+        .header-slogan::before {
+            content: "✦";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff8ef;
+            padding: 0 12px;
+            color: #111111;
+            font-size: 11px;
+            letter-spacing: normal;
+        }
+        
+        .main-content { padding: 0 20px; }
+        .cliente-info { 
+            background: linear-gradient(135deg, var(--bg-crema) 0%, #fff8f0 100%);
+            padding: 20px; 
+            border-radius: 24px; 
+            margin-bottom: 20px; 
+            border: 1px solid rgba(218, 165, 32, 0.2);
+            transition: all 0.3s;
+        }
+        .cliente-info:hover {
+            border-color: rgba(218, 165, 32, 0.4);
+            box-shadow: 0 6px 20px rgba(218, 165, 32, 0.08);
+        }
+        .input-group { 
+            position: relative;
+            margin-bottom: 12px;
+        }
+        .input-group label { 
+            display: block; 
+            font-size: 11px; 
+            font-weight: 800; 
+            margin-bottom: 6px; 
+            text-transform: uppercase; 
+            color: var(--text-dark); 
+            letter-spacing: 0.5px; 
+        }
+        .input-group input, 
+        .input-group select, 
+        .input-group textarea { 
+            width: 100%; 
+            padding: 12px 14px; 
+            border: 1.5px solid #d2b48c; 
+            border-radius: 14px; 
+            font-size: 14px; 
+            background-color: var(--blanco); 
+            color: var(--text-dark); 
+            transition: all 0.3s ease; 
+            font-family: inherit;
+        }
+        .input-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        .input-group input:focus, 
+        .input-group select:focus,
+        .input-group textarea:focus { 
+            outline: none; 
+            border-color: var(--dorado); 
+            box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.12); 
+        }
+        .form-grid-dos {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 4px;
+        }
+        .sugerencias-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #d2b48c;
+            border-radius: 12px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .sugerencia-item {
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid #f0ece5;
+        }
+        .sugerencia-item:hover {
+            background: var(--dorado-claro);
+        }
+        .sugerencia-item .sugerencia-nombre {
+            font-weight: 800;
+            font-size: 13px;
+            color: var(--text-dark);
+        }
+        .sugerencia-item .sugerencia-telefono {
+            font-size: 11px;
+            color: var(--dorado-dark);
+            margin-top: 4px;
+        }
+        .sugerencia-item .sugerencia-direccion {
+            font-size: 10px;
+            color: #9e8a7a;
+            margin-top: 2px;
+        }
+        .search-container {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 14px 18px 14px 48px;
+            border: 1.5px solid #d2b48c;
+            border-radius: 30px;
+            font-size: 14px;
+            background-color: var(--blanco);
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .search-container input:focus {
+            outline: none;
+            border-color: var(--dorado);
+            box-shadow: 0 4px 15px rgba(218, 165, 32, 0.12);
+            transform: scale(1.01);
+        }
+        .search-container i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #bcaaa4;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .search-container:focus-within i {
+            color: var(--dorado);
+            transform: translateY(-50%) scale(1.1);
+        }
+        .search-container input:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .acordeon { width: 100%; min-height: 50px; }
+        .acordeon-item { 
+            margin-bottom: 16px; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            border: 1px solid #eee9e0; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02); 
+            transition: all 0.3s ease; 
+            background-color: var(--blanco); 
+        }
+        .acordeon-item:hover { 
+            border-color: rgba(218, 165, 32, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+        }
+        .acordeon-item.hidden-item { display: none; }
+        .producto-row.hidden-row { display: none; }
+        .acordeon-header { 
+            width: 100%; 
+            background: linear-gradient(135deg, var(--blanco) 0%, #fefcf9 100%);
+            padding: 16px 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border: none; 
+            cursor: pointer; 
+            text-align: left;
+            transition: all 0.3s;
+        }
+        .acordeon-header:hover {
+            background: linear-gradient(135deg, #fefcf9 0%, #fff8e8 100%);
+            padding-left: 24px;
+        }
+        .acordeon-header h3 { 
+            font-family: 'Playfair Display', serif; 
+            font-size: 17px; 
+            font-weight: 700; 
+            color: var(--text-dark); 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+        }
+        .acordeon-header h3 i { 
+            color: var(--dorado); 
+            font-size: 18px; 
+            width: 24px; 
+            text-align: center; 
+            transition: transform 0.3s;
+        }
+        .acordeon-header:hover h3 i {
+            transform: scale(1.1);
+        }
+        .acordeon-header i.arrow { 
+            transition: transform 0.3s ease; 
+            color: #bcaaa4; 
+            font-size: 14px; 
+        }
+        .acordeon-content { 
+            max-height: 0; 
+            overflow: hidden; 
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            background-color: var(--blanco); 
+        }
+        .producto-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 14px 20px; 
+            border-top: 1px solid #f5efe5; 
+            background: linear-gradient(135deg, #fffdf8 0%, #fffcf5 100%);
+            transition: all 0.25s;
+            margin: 4px 8px;
+            border-radius: 14px;
+        }
+        .producto-row:hover {
+            background: linear-gradient(135deg, #fffcf5 0%, #fff8e8 100%);
+            transform: translateX(4px);
+            box-shadow: -3px 0 0 var(--dorado);
+        }
+        .producto-row:nth-child(even) { 
+            background: linear-gradient(135deg, var(--blanco) 0%, #fefdf9 100%);
+        }
+        .producto-info { 
+            padding-right: 10px; 
+            flex: 1;
+        }
+        .producto-info .nombre { 
+            font-size: 13px; 
+            font-weight: 700; 
+            color: var(--text-dark); 
+            letter-spacing: 0.2px; 
+            margin-bottom: 4px;
+        }
+        .producto-info .precio { 
+            font-size: 13px; 
+            color: var(--dorado-dark); 
+            font-weight: 800; 
+        }
+        .controles { 
+            display: flex; 
+            align-items: center; 
+            background-color: #f5f0e8; 
+            border-radius: 40px; 
+            padding: 4px; 
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .btn-cantidad { 
+            width: 34px; 
+            height: 34px; 
+            border-radius: 50%; 
+            border: none; 
+            background: var(--blanco); 
+            cursor: pointer; 
+            font-size: 18px; 
+            font-weight: 700;
+            color: var(--text-dark); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            transition: all 0.2s ease; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .btn-cantidad:hover { 
+            background: var(--dorado); 
+            color: var(--blanco); 
+            transform: scale(1.08);
+        }
+        .btn-cantidad:active {
+            transform: scale(0.95);
+        }
+        .cantidad-valor { 
+            font-size: 15px; 
+            font-weight: 800; 
+            min-width: 34px; 
+            text-align: center; 
+            color: var(--text-dark); 
+        }
+        .footer-resumen { 
+            margin-top: 24px; 
+            border-top: 1px solid #eee5d8; 
+            padding: 20px 20px 28px 20px; 
+            background: linear-gradient(135deg, var(--blanco) 0%, #fefdfb 100%);
+        }
+        .total-box { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: linear-gradient(135deg, var(--bg-crema), #fff5e8);
+            padding: 16px 20px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(218, 165, 32, 0.3);
+        }
+        .total-box span { 
+            font-size: 13px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px; 
+            color: #7a6f66; 
+        }
+        .total-box .monto { 
+            font-size: 32px; 
+            font-weight: 900; 
+            background: linear-gradient(135deg, var(--text-dark) 0%, var(--dorado) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-family: 'Playfair Display', serif; 
+        }
+        .btn-whatsapp { 
+            width: 100%; 
+            padding: 16px; 
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: var(--blanco); 
+            border: none; 
+            border-radius: 30px; 
+            font-size: 15px; 
+            font-weight: 800; 
+            cursor: pointer; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 12px; 
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.25);
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+        .btn-whatsapp:hover { 
+            background: linear-gradient(135deg, #128C7E 0%, #0a6b5e 100%);
+            transform: translateY(-3px); 
+            box-shadow: 0 12px 28px rgba(37, 211, 102, 0.35);
+        }
+        .btn-whatsapp:active {
+            transform: translateY(0);
+        }
+        .btn-whatsapp i {
+            transition: transform 0.2s;
+        }
+        .btn-whatsapp:hover i {
+            transform: scale(1.1);
+        }
+        .skeleton-loading {
+            padding: 16px;
+        }
+        .skeleton-item {
+            background: linear-gradient(90deg, #f0ece5 25%, #e8e2d8 50%, #f0ece5 75%);
+            background-size: 200% 100%;
+            animation: skeleton 1.2s ease-in-out infinite;
+            height: 70px;
+            border-radius: 16px;
+            margin-bottom: 14px;
+        }
+        @keyframes skeleton {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0ebe3;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--dorado);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--dorado-dark);
+        }
+        .loading { 
+            text-align: center; 
+            padding: 40px; 
+            font-weight: 600; 
+            color: var(--dorado-dark); 
+            font-size: 14px; 
+            width: 100%; 
+        }
+        .btn-retry { 
+            margin-top: 16px; 
+            background: var(--dorado); 
+            color: var(--text-dark); 
+            border: none; 
+            padding: 10px 24px; 
+            border-radius: 30px; 
+            cursor: pointer; 
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+        .btn-retry:hover {
+            transform: scale(1.02);
+            background: var(--dorado-dark);
+            color: white;
+        }
+        .cache-badge {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 11px;
+            padding: 6px 12px;
+            border-radius: 30px;
+            pointer-events: none;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            transition: opacity 0.3s;
+        }
+        .observaciones-field {
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="header">
+        <img src="https://lh3.googleusercontent.com/d/1PM66mFfsBp8P-6UV6h2N91_UgIkAM3Wo" class="logo-insignia" alt="Bon Appetit">
+        <p class="header-slogan">Donde el buen provecho es un gran placer.<br>El buen comer, un verdadero gustazo.</p>
+    </div>
+    <div id="header-spacer" style="height: 0px; transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1);"></div>
+    <div class="main-content">
+        <div class="cliente-info">
+            <div class="input-group" style="position: relative;">
+                <label for="txtNombre"><i class="fa-regular fa-user"></i> Cliente / Negocio:</label>
+                <input type="text" id="txtNombre" placeholder="Escribe el nombre del cliente..." autocomplete="off">
+                <div id="sugerenciasClientes" class="sugerencias-dropdown"></div>
+            </div>
+            <div class="form-grid-dos">
+                <div class="input-group">
+                    <label for="txtTelefono"><i class="fa-brands fa-whatsapp"></i> Teléfono / WhatsApp:</label>
+                    <input type="tel" id="txtTelefono" placeholder="Ej. 0412-5555555">
+                </div>
+                <div class="input-group">
+                    <label for="txtDireccion"><i class="fa-regular fa-location-dot"></i> Dirección:</label>
+                    <input type="text" id="txtDireccion" placeholder="Dirección del cliente">
+                </div>
+            </div>
+            <div class="form-grid-dos">
+                <div class="input-group">
+                    <label for="txtContacto"><i class="fa-regular fa-user"></i> Contacto:</label>
+                    <input type="text" id="txtContacto" placeholder="Persona de contacto">
+                </div>
+                <div class="input-group">
+                    <label for="selEntrega"><i class="fa-regular fa-truck"></i> Tipo de Entrega:</label>
+                    <select id="selEntrega">
+                        <option value="Delivery">🛵 Delivery</option>
+                        <option value="Retiro en tienda">🏪 Retiro en Tienda</option>
+                    </select>
+                </div>
+            </div>
+            <div class="input-group observaciones-field">
+                <label for="txtObservaciones"><i class="fa-regular fa-pen-to-square"></i> Observaciones / Notas:</label>
+                <textarea id="txtObservaciones" rows="2" placeholder="Ej: Entregar después de 3pm, factura por favor, llamar antes de llegar..."></textarea>
+            </div>
+        </div>
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="txtBuscar" placeholder="Buscar especia, condimento o hierba..." disabled>
+        </div>
+        <div id="contenedor-acordeon" class="acordeon">
+            <div class="skeleton-loading">
+                <div class="skeleton-item"></div>
+                <div class="skeleton-item"></div>
+                <div class="skeleton-item"></div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-resumen">
+        <div class="total-box">
+            <span><i class="fa-regular fa-credit-card"></i> Total Estimado:</span>
+            <div class="monto">$<span id="lblTotal">0.00</span></div>
+        </div>
+        <button class="btn-whatsapp" onclick="enviarPedidoWhatsApp()">
+            <i class="fa-brands fa-whatsapp fa-lg"></i> Enviar Pedido por WhatsApp
+        </button>
+    </div>
+</div>
+<div class="cache-badge" id="cacheBadge" style="display: none;">📦 Carga instantánea</div>
+
+<script>
+    // ========== CONFIGURACIÓN ==========
+    const URL_DATA = 'https://docs.google.com/spreadsheets/d/1pUkyu4Ji4cZYXe0XJ4RghB1p1N3T1cYemZZ4cp8GYmk/gviz/tq?tqx=out:json';
+    
+    const CLIENTES_SHEET_ID = '1odxmYGU1tsPSAbL4DDJg1_bedbn0Fqec';
+    const CLIENTES_SHEET_NAME = 'Hoja 1';
+    const CLIENTES_URL = `https://docs.google.com/spreadsheets/d/${CLIENTES_SHEET_ID}/gviz/tq?tqx=out:json&sheet=${CLIENTES_SHEET_NAME}`;
+    
+    const STORAGE_KEY = 'bonappetit_carrito';
+    const CACHE_KEY = 'bonappetit_productos_cache';
+    const CACHE_TIME_KEY = 'bonappetit_cache_time';
+    const CLIENTES_CACHE_KEY = 'bonappetit_clientes_cache';
+    const CLIENTES_CACHE_TIME_KEY = 'bonappetit_clientes_cache_time';
+    const CACHE_DURATION = 3600000;
+
+    let carrito = {};
+    let totalGeneral = 0;
+    let acordeonesAbiertos = new Map();
+    let listaClientes = [];
+
+    function escapeHtml(texto) {
+        if (!texto) return '';
+        const div = document.createElement('div');
+        div.textContent = texto;
+        return div.innerHTML;
+    }
+
+    function normalizarTexto(str) {
+        if (!str) return '';
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    function generarIdProducto(categoria, nombre, precio) {
+        return btoa(`${categoria}|${nombre}|${precio}`).replace(/[^a-zA-Z0-9]/g, '_');
+    }
+
+    function guardarCarrito() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(carrito));
+    }
+
+    function cargarCarritoGuardado() {
+        const guardado = localStorage.getItem(STORAGE_KEY);
+        if (guardado) {
+            try {
+                carrito = JSON.parse(guardado);
+                calcularTotal();
+            } catch(e) { console.error('Error al cargar carrito', e); }
+        }
+    }
+
+    function calcularTotal() {
+        totalGeneral = 0;
+        for (let key in carrito) {
+            let item = carrito[key];
+            let subtotal = item.cantidad * item.precio;
+            totalGeneral += Math.round(subtotal * 100) / 100;
+        }
+        const lblTotal = document.getElementById('lblTotal');
+        if (lblTotal) {
+            lblTotal.innerText = totalGeneral.toFixed(2);
+        }
+    }
+
+    function cambiarCantidad(idSeguro, nombreReal, precio, cambio) {
+        if (!carrito[idSeguro]) {
+            carrito[idSeguro] = { nombre: nombreReal, cantidad: 0, precio: precio };
+        }
+        const nuevaCantidad = carrito[idSeguro].cantidad + cambio;
+        if (nuevaCantidad <= 0) {
+            delete carrito[idSeguro];
+        } else {
+            carrito[idSeguro].cantidad = nuevaCantidad;
+        }
+        const elementoCantidad = document.getElementById(`cant-${idSeguro}`);
+        if (elementoCantidad) {
+            elementoCantidad.innerText = carrito[idSeguro] ? carrito[idSeguro].cantidad : 0;
+        }
+        calcularTotal();
+        guardarCarrito();
+    }
+
+    function mostrarBadgeCache(usandoCache) {
+        const badge = document.getElementById('cacheBadge');
+        if (usandoCache) {
+            badge.style.display = 'block';
+            badge.style.opacity = '1';
+            setTimeout(() => {
+                badge.style.opacity = '0';
+                setTimeout(() => badge.style.display = 'none', 1000);
+            }, 2000);
+        }
+    }
+
+    async function cargarClientes() {
+        const cache = localStorage.getItem(CLIENTES_CACHE_KEY);
+        const cacheTime = localStorage.getItem(CLIENTES_CACHE_TIME_KEY);
+        if (cache && cacheTime && (Date.now() - parseInt(cacheTime) < CACHE_DURATION)) {
+            listaClientes = JSON.parse(cache);
+            console.log('📦 Clientes cargados desde caché:', listaClientes.length);
+            return;
+        }
+        try {
+            const respuesta = await fetch(CLIENTES_URL);
+            if (!respuesta.ok) throw new Error("Error al cargar clientes");
+            const texto = await respuesta.text();
+            const jsonLimpio = texto.match(/google\.visualization\.Query\.setResponse\((.+)\)/);
+            if (!jsonLimpio) throw new Error("Formato inválido");
+            const jsonPuro = JSON.parse(jsonLimpio[1]);
+            const filas = jsonPuro.table.rows;
+            listaClientes = [];
+            for (let i = 1; i < filas.length; i++) {
+                const fila = filas[i];
+                const id = fila.c[0] ? fila.c[0].v : null;
+                const cliente = fila.c[1] ? fila.c[1].v : null;
+                const rifCedula = fila.c[2] ? fila.c[2].v : null;
+                const direccion = fila.c[3] ? fila.c[3].v : null;
+                const telefonos = fila.c[4] ? fila.c[4].v : null;
+                const contacto = fila.c[5] ? fila.c[5].v : null;
+                if (cliente && telefonos) {
+                    listaClientes.push({
+                        id: id || '',
+                        cliente: cliente,
+                        rifCedula: rifCedula || '',
+                        direccion: direccion || '',
+                        telefonos: telefonos,
+                        contacto: contacto || ''
+                    });
+                }
+            }
+            localStorage.setItem(CLIENTES_CACHE_KEY, JSON.stringify(listaClientes));
+            localStorage.setItem(CLIENTES_CACHE_TIME_KEY, Date.now());
+            console.log('✅ Clientes cargados:', listaClientes.length);
+        } catch (error) {
+            console.error("Error al cargar clientes:", error);
+        }
+    }
+
+    function initAutocompletadoClientes() {
+        const inputNombre = document.getElementById('txtNombre');
+        const inputTelefono = document.getElementById('txtTelefono');
+        const inputDireccion = document.getElementById('txtDireccion');
+        const inputContacto = document.getElementById('txtContacto');
+        const dropdown = document.getElementById('sugerenciasClientes');
+        if (!inputNombre) return;
+        inputNombre.addEventListener('input', function() {
+            const busqueda = normalizarTexto(this.value);
+            if (busqueda.length < 2) {
+                dropdown.style.display = 'none';
+                return;
+            }
+            const coincidencias = listaClientes.filter(cliente => 
+                normalizarTexto(cliente.cliente).includes(busqueda) ||
+                (cliente.telefonos && normalizarTexto(cliente.telefonos).includes(busqueda))
+            ).slice(0, 8);
+            if (coincidencias.length > 0) {
+                dropdown.innerHTML = '';
+                coincidencias.forEach(cliente => {
+                    const item = document.createElement('div');
+                    item.className = 'sugerencia-item';
+                    item.innerHTML = `
+                        <div class="sugerencia-nombre">🏢 ${escapeHtml(cliente.cliente)}</div>
+                        <div class="sugerencia-telefono">📞 ${escapeHtml(cliente.telefonos)}</div>
+                        ${cliente.direccion ? `<div class="sugerencia-direccion">📍 ${escapeHtml(cliente.direccion.substring(0, 50))}${cliente.direccion.length > 50 ? '...' : ''}</div>` : ''}
+                        ${cliente.contacto ? `<div class="sugerencia-direccion">👤 ${escapeHtml(cliente.contacto)}</div>` : ''}
+                    `;
+                    item.addEventListener('click', () => {
+                        inputNombre.value = cliente.cliente;
+                        inputTelefono.value = cliente.telefonos;
+                        inputDireccion.value = cliente.direccion || '';
+                        inputContacto.value = cliente.contacto || '';
+                        dropdown.style.display = 'none';
+                    });
+                    dropdown.appendChild(item);
+                });
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        });
+        document.addEventListener('click', function(e) {
+            if (!inputNombre.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+        inputNombre.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                dropdown.style.display = 'none';
+            }
+        });
+    }
+
+    // ========== DETECTAR CLIENTE DESDE LA URL ==========
+    function cargarClienteDesdeURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const cliente = urlParams.get('cliente');
+        
+        if (cliente) {
+            const inputNombre = document.getElementById('txtNombre');
+            if (inputNombre) {
+                inputNombre.value = decodeURIComponent(cliente);
+                // Disparar evento para activar autocompletado
+                inputNombre.dispatchEvent(new Event('input'));
+            }
+        }
+    }
+
+    async function cargarProductos() {
+        const contenedor = document.getElementById('contenedor-acordeon');
+        const buscador = document.getElementById('txtBuscar');
+        if (!contenedor) return;
+
+        const cache = localStorage.getItem(CACHE_KEY);
+        const cacheTime = localStorage.getItem(CACHE_TIME_KEY);
+        
+        if (cache && cacheTime && (Date.now() - parseInt(cacheTime) < CACHE_DURATION)) {
+            console.log('📦 Cargando productos desde caché local');
+            try {
+                const productosPorCategoria = JSON.parse(cache);
+                renderizarAcordeon(productosPorCategoria);
+                restaurarEstadosAcordeones();
+                buscador.disabled = false;
+                if (buscador.value.trim() !== '') {
+                    filtrarProductos();
+                }
+                mostrarBadgeCache(true);
+                actualizarCacheEnSegundoPlano();
+                return;
+            } catch(e) {
+                console.error('Error al parsear caché', e);
+            }
+        }
+
+        contenedor.innerHTML = `
+            <div class="skeleton-loading">
+                <div class="skeleton-item"></div>
+                <div class="skeleton-item"></div>
+                <div class="skeleton-item"></div>
+            </div>
+        `;
+
+        try {
+            const respuesta = await fetch(URL_DATA);
+            if (!respuesta.ok) throw new Error("Error en red: " + respuesta.status);
+            
+            const texto = await respuesta.text();
+            const jsonLimpio = texto.match(/google\.visualization\.Query\.setResponse\((.+)\)/);
+            if (!jsonLimpio) throw new Error("Formato de respuesta inválido");
+            
+            const jsonPuro = JSON.parse(jsonLimpio[1]);
+            const filas = jsonPuro.table.rows;
+
+            let productosPorCategoria = {};
+
+            console.log('📊 Total de filas encontradas:', filas.length);
+
+            for (let i = 1; i < filas.length; i++) {
+                const fila = filas[i];
+                const descripcion = fila.c[1] ? fila.c[1].v : null;
+                const precio = fila.c[2] ? parseFloat(fila.c[2].v) : 0;
+                let categoria = fila.c[4] ? fila.c[4].v : null;
+                
+                if (categoria) {
+                    categoria = categoria.trim().toLowerCase();
+                } else {
+                    categoria = 'otros';
+                }
+                
+                if (i <= 5) {
+                    console.log(`📦 Producto ${i}: ${descripcion} - $${precio} - Categoría: ${categoria}`);
+                }
+                
+                if (descripcion && precio > 0 && descripcion !== "Descripción") {
+                    if (!productosPorCategoria[categoria]) {
+                        productosPorCategoria[categoria] = [];
+                    }
+                    productosPorCategoria[categoria].push({
+                        nombre: descripcion,
+                        precio: precio
+                    });
+                }
+            }
+
+            console.log('📂 Categorías encontradas:', Object.keys(productosPorCategoria));
+            
+            if (Object.keys(productosPorCategoria).length === 0) {
+                console.warn('⚠️ No se encontraron productos. Verifica la estructura de columnas.');
+                contenedor.innerHTML = `
+                    <div class="loading" style="color:#d32f2f;">
+                        ⚠️ No se encontraron productos.<br>
+                        <small>Verifica que las columnas tengan: Descripción, Precio, Categoría</small>
+                    </div>
+                `;
+                return;
+            }
+
+            localStorage.setItem(CACHE_KEY, JSON.stringify(productosPorCategoria));
+            localStorage.setItem(CACHE_TIME_KEY, Date.now());
+
+            renderizarAcordeon(productosPorCategoria);
+            restaurarEstadosAcordeones();
+            buscador.disabled = false;
+            
+            if (buscador.value.trim() !== '') {
+                filtrarProductos();
+            }
+
+        } catch (error) {
+            console.error('❌ Error cargando productos:', error);
+            contenedor.innerHTML = `
+                <div class="loading" style="color:#d32f2f;">
+                    <i class="fa-solid fa-circle-exclamation"></i><br>
+                    ⚠️ Error al sincronizar inventario.<br>
+                    <small>${error.message}</small><br>
+                    <button class="btn-retry" onclick="cargarProductos()">🔁 Reintentar</button>
+                </div>
+            `;
+            buscador.disabled = true;
+        }
+    }
+
+    async function actualizarCacheEnSegundoPlano() {
+        try {
+            const respuesta = await fetch(URL_DATA);
+            if (!respuesta.ok) throw new Error("Error en red");
+            
+            const texto = await respuesta.text();
+            const jsonLimpio = texto.match(/google\.visualization\.Query\.setResponse\((.+)\)/);
+            if (!jsonLimpio) throw new Error("Formato inválido");
+            
+            const jsonPuro = JSON.parse(jsonLimpio[1]);
+            const filas = jsonPuro.table.rows;
+
+            let productosPorCategoria = {};
+
+            for (let i = 1; i < filas.length; i++) {
+                const fila = filas[i];
+                const descripcion = fila.c[1] ? fila.c[1].v : null;
+                const precio = fila.c[2] ? parseFloat(fila.c[2].v) : 0;
+                let categoria = fila.c[4] ? fila.c[4].v : 'otros';
+                
+                if (categoria) {
+                    categoria = categoria.trim().toLowerCase();
+                } else {
+                    categoria = 'otros';
+                }
+                
+                if (descripcion && precio > 0 && descripcion !== "Descripción") {
+                    if (!productosPorCategoria[categoria]) {
+                        productosPorCategoria[categoria] = [];
+                    }
+                    productosPorCategoria[categoria].push({
+                        nombre: descripcion,
+                        precio: price = precio
+                    });
+                }
+            }
+
+            localStorage.setItem(CACHE_KEY, JSON.stringify(productosPorCategoria));
+            localStorage.setItem(CACHE_TIME_KEY, Date.now());
+            console.log('🔄 Caché de productos actualizada en segundo plano');
+        } catch(e) {
+            console.log('Actualización en segundo plano falló:', e);
+        }
+    }
+
+    function renderizarAcordeon(datos) {
+        const contenedor = document.getElementById('contenedor-acordeon');
+        const iconsExt = {
+            'condimento': 'fa-mortar-pestle',
+            'especias': 'fa-seedling',
+            'reposteria': 'fa-cookie-bite',
+            'quimico': 'fa-flask',
+            'otros': 'fa-box'
+        };
+        contenedor.innerHTML = '';
+        for (let categoria in datos) {
+            const icono = iconsExt[categoria] || 'fa-box';
+            let HTMLProductos = '';
+            datos[categoria].forEach(prod => {
+                const idSeguro = generarIdProducto(categoria, prod.nombre, prod.precio);
+                const nombreEscapado = escapeHtml(prod.nombre);
+                const nombreNormalizado = normalizarTexto(prod.nombre);
+                const cantidadActual = carrito[idSeguro] ? carrito[idSeguro].cantidad : 0;
+                HTMLProductos += `
+                    <div class="producto-row" data-nombre="${nombreNormalizado}" data-id="${idSeguro}">
+                        <div class="producto-info">
+                            <div class="nombre">${nombreEscapado}</div>
+                            <div class="precio">$${prod.precio.toFixed(2)}</div>
+                        </div>
+                        <div class="controles">
+                            <button class="btn-cantidad" onclick="cambiarCantidad('${idSeguro}', '${escapeHtml(prod.nombre)}', ${prod.precio}, -1)">−</button>
+                            <div class="cantidad-valor" id="cant-${idSeguro}">${cantidadActual}</div>
+                            <button class="btn-cantidad" onclick="cambiarCantidad('${idSeguro}', '${escapeHtml(prod.nombre)}', ${prod.precio}, 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+            const tituloFormateado = categoria.charAt(0).toUpperCase() + categoria.slice(1);
+            const categoriaKey = normalizarTexto(categoria);
+            const itemAcordeon = document.createElement('div');
+            itemAcordeon.className = 'acordeon-item';
+            itemAcordeon.setAttribute('data-categoria', categoryKey = categoriaKey);
+            itemAcordeon.innerHTML = `
+                <button class="acordeon-header" onclick="toggleAcordeon(this)">
+                    <h3><i class="fa-solid ${icono}"></i> ${escapeHtml(tituloFormateado)}</h3>
+                    <i class="fa-solid fa-chevron-down arrow"></i>
+                </button>
+                <div class="acordeon-content">
+                    ${HTMLProductos}
+                </div>
+            `;
+            contenedor.appendChild(itemAcordeon);
+        }
+        actualizarTodosLosContadores();
+    }
+
+    function actualizarTodosLosContadores() {
+        for (let id in carrito) {
+            const elementoCant = document.getElementById(`cant-${id}`);
+            if (elementoCant) {
+                elementoCant.innerText = carrito[id].cantidad;
+            }
+        }
+    }
+
+    function restaurarEstadosAcordeones() {
+        const items = document.querySelectorAll('.acordeon-item');
+        items.forEach((item) => {
+            const categoria = item.getAttribute('data-categoria');
+            if (acordeonesAbiertos.has(categoria)) {
+                const contenido = item.querySelector('.acordeon-content');
+                const flecha = item.querySelector('.arrow');
+                if (contenido && acordeonesAbiertos.get(categoria)) {
+                    contenido.style.maxHeight = contenido.scrollHeight + "px";
+                    if (flecha) flecha.style.transform = 'rotate(180deg)';
+                }
+            }
+        });
+    }
+
+    function toggleAcordeon(boton) {
+        const contenido = boton.nextElementSibling;
+        const flecha = boton.querySelector('.arrow');
+        const itemPadre = boton.closest('.acordeon-item');
+        const categoria = itemPadre.getAttribute('data-categoria');
+        if (contenido.style.maxHeight) {
+            contenido.style.maxHeight = null;
+            if (flecha) flecha.style.transform = 'rotate(0deg)';
+            acordeonesAbiertos.set(categoria, false);
+        } else {
+            contenido.style.maxHeight = contenido.scrollHeight + "px";
+            if (flecha) flecha.style.transform = 'rotate(180deg)';
+            acordeonesAbiertos.set(categoria, true);
+        }
+    }
+
+    function filtrarProductos() {
+        const busquedaInput = document.getElementById('txtBuscar').value;
+        const busqueda = normalizarTexto(busquedaInput);
+        const itemsAcordeon = document.querySelectorAll('.acordeon-item');
+        itemsAcordeon.forEach(item => {
+            const filas = item.querySelectorAll('.producto-row');
+            let visiblesEnCategoria = 0;
+            filas.forEach(fila => {
+                const nombreProducto = fila.getAttribute('data-nombre') || '';
+                if (busqueda === '' || nombreProducto.includes(busqueda)) {
+                    fila.classList.remove('hidden-row');
+                    visiblesEnCategoria++;
+                } else {
+                    fila.classList.add('hidden-row');
+                }
+            });
+            if (visiblesEnCategoria > 0) {
+                item.classList.remove('hidden-item');
+                if (busqueda !== '') {
+                    const contenido = item.querySelector('.acordeon-content');
+                    const flecha = item.querySelector('.arrow');
+                    if (contenido && !contenido.style.maxHeight) {
+                        contenido.style.maxHeight = contenido.scrollHeight + "px";
+                        if (flecha) flecha.style.transform = 'rotate(180deg)';
+                    }
+                } else {
+                    const categoria = item.getAttribute('data-categoria');
+                    const contenido = item.querySelector('.acordeon-content');
+                    const flecha = item.querySelector('.arrow');
+                    const deberiaEstarAbierto = acordeonesAbiertos.get(categoria) || false;
+                    if (deberiaEstarAbierto) {
+                        if (contenido && !contenido.style.maxHeight) {
+                            contenido.style.maxHeight = contenido.scrollHeight + "px";
+                            if (flecha) flecha.style.transform = 'rotate(180deg)';
+                        }
+                    } else {
+                        if (contenido && contenido.style.maxHeight) {
+                            contenido.style.maxHeight = null;
+                            if (flecha) flecha.style.transform = 'rotate(0deg)';
+                        }
+                    }
+                }
+            } else {
+                item.classList.add('hidden-item');
+            }
+        });
+    }
+
+    function validarTelefono(telefono) {
+        const soloNumeros = telefono.replace(/[^0-9]/g, '');
+        return soloNumeros.length >= 10;
+    }
+
+    function enviarPedidoWhatsApp() {
+        const nombreCliente = document.getElementById('txtNombre').value.trim();
+        const telefonoCliente = document.getElementById('txtTelefono').value.trim();
+        const direccionCliente = document.getElementById('txtDireccion').value.trim();
+        const contactoCliente = document.getElementById('txtContacto').value.trim();
+        const tipoEntrega = document.getElementById('selEntrega').value;
+        const observaciones = document.getElementById('txtObservaciones').value.trim();
+        if (nombreCliente === "") {
+            alert("✏️ Ingrese el nombre del cliente o negocio.");
+            document.getElementById('txtNombre').focus();
+            return;
+        }
+        if (!validarTelefono(telefonoCliente)) {
+            alert("📱 Ingrese un teléfono válido (mínimo 10 dígitos).");
+            document.getElementById('txtTelefono').focus();
+            return;
+        }
+        if (Object.keys(carrito).length === 0) {
+            alert("🛒 Pedido vacío. Agregue productos.");
+            return;
+        }
+        const fecha = new Date();
+        const fechaFormateada = `${fecha.getDate()}/${fecha.getMonth() + 1} ${fecha.getHours()}:${fecha.getMinutes().toString().padStart(2, '0')}`;
+        let totalCorrecto = 0;
+        for (let key in carrito) {
+            let item = carrito[key];
+            let subtotal = item.cantidad * item.precio;
+            totalCorrecto += Math.round(subtotal * 100) / 100;
+        }
+        let mensaje = `*BON APPETIT · EL GUSTAZO*\n`;
+        mensaje += `─────────────────────────────\n`;
+        mensaje += `🏢 *Cliente:* ${nombreCliente}\n`;
+        mensaje += `📞 *Teléfono:* ${telefonoCliente}\n`;
+        if (direccionCliente) mensaje += `📍 *Dirección:* ${direccionCliente}\n`;
+        if (contactoCliente) mensaje += `👤 *Contacto:* ${contactoCliente}\n`;
+        mensaje += `🚚 *Entrega:* ${tipoEntrega}\n`;
+        mensaje += `📅 *Fecha:* ${fechaFormateada}\n`;
+        if (observaciones) {
+            mensaje += `\n📝 *OBSERVACIONES:*\n${observaciones}\n`;
+        }
+        mensaje += `─────────────────────────────\n`;
+        mensaje += `*📦 DETALLE DEL PEDIDO*\n`;
+        mensaje += `─────────────────────────────\n`;
+        let maxLen = 0;
+        for (let key in carrito) {
+            let nombreLen = carrito[key].nombre.length;
+            if (nombreLen > maxLen) maxLen = nombreLen;
+        }
+        maxLen = Math.min(maxLen, 22);
+        for (let key in carrito) {
+            let item = carrito[key];
+            let subtotal = Math.round(item.cantidad * item.precio * 100) / 100;
+            let subtotalFormateado = subtotal.toFixed(2);
+            let nombreItem = item.nombre;
+            let cantidad = item.cantidad;
+            let espacios = ' '.repeat(maxLen - nombreItem.length + 2);
+            mensaje += `🌿 ${nombreItem}${espacios}${cantidad}  $${subtotalFormateado}\n`;
+        }
+        mensaje += `─────────────────────────────\n`;
+        mensaje += `💵 *TOTAL:* $${totalCorrecto.toFixed(2)}\n`;
+        mensaje += `─────────────────────────────\n\n`;
+        mensaje += `✅ *Pedido registrado*\n`;
+        mensaje += `🙏 *Gracias por su compra*`;
+        const mensajeCodificado = encodeURIComponent(mensaje);
+        const numeroTelefono = "584125820897";
+        window.open(`https://wa.me/${numeroTelefono}?text=${mensajeCodificado}`, '_blank');
+        carrito = {};
+        totalGeneral = 0;
+        guardarCarrito();
+        const lblTotal = document.getElementById('lblTotal');
+        if (lblTotal) lblTotal.innerText = "0.00";
+        const todasLasCantidades = document.querySelectorAll('.cantidad-valor');
+        todasLasCantidades.forEach(elemento => {
+            elemento.innerText = "0";
+        });
+        document.getElementById('txtNombre').value = "";
+        document.getElementById('txtTelefono').value = "";
+        document.getElementById('txtDireccion').value = "";
+        document.getElementById('txtContacto').value = "";
+        document.getElementById('txtObservaciones').value = "";
+        document.getElementById('txtBuscar').value = "";
+        localStorage.removeItem('bonappetit_nombre');
+        localStorage.removeItem('bonappetit_telefono');
+        const todosLosContenidos = document.querySelectorAll('.acordeon-content');
+        const todasLasFlechas = document.querySelectorAll('.arrow');
+        todosLosContenidos.forEach(contenido => {
+            contenido.style.maxHeight = null;
+        });
+        todasLasFlechas.forEach(flecha => {
+            flecha.style.transform = 'rotate(0deg)';
+        });
+        acordeonesAbiertos.clear();
+        alert("✅ Pedido enviado correctamente.\n\nEl formulario se ha reiniciado para el próximo pedido.");
+    }
+
+    window.onload = async () => {
+        cargarCarritoGuardado();
+        await cargarClientes();
+        cargarProductos();
+        initAutocompletadoClientes();
+        const buscador = document.getElementById('txtBuscar');
+        if (buscador) {
+            buscador.addEventListener('input', filtrarProductos);
+        }
+        const nombreGuardado = localStorage.getItem('bonappetit_nombre');
+        const telefonoGuardado = localStorage.getItem('bonappetit_telefono');
+        if (nombreGuardado) document.getElementById('txtNombre').value = nombreGuardado;
+        if (telefonoGuardado) document.getElementById('txtTelefono').value = telefonoGuardado;
+        document.getElementById('txtNombre').addEventListener('change', () => {
+            localStorage.setItem('bonappetit_nombre', document.getElementById('txtNombre').value);
+        });
+        document.getElementById('txtTelefono').addEventListener('change', () => {
+            localStorage.setItem('bonappetit_telefono', document.getElementById('txtTelefono').value);
+        });
+        
+        // NUEVO: Cargar cliente desde URL
+        cargarClienteDesdeURL();
+
+        // Alternar clase .scrolled según la posición del scroll para mayor rendimiento en móviles
+        const header = document.querySelector('.header');
+        const spacer = document.getElementById('header-spacer');
+        
+        if (spacer) {
+            spacer.style.display = 'none';
+        }
+        
+        let ticking = false;
+        function updateScroll() {
+            if (header) {
+                const scrollY = window.scrollY;
+                if (scrollY > 20) {
+                    header.classList.add('scrolled');
+                } else if (scrollY <= 6) {
+                    header.classList.remove('scrolled');
+                }
+            }
+            ticking = false;
+        }
+        
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(updateScroll);
+                ticking = true;
+            }
+        }, { passive: true });
+        
+        // Ejecución inicial por si carga con scroll previo
+        updateScroll();
+    };
+</script>
+</body>
+</html>
