@@ -405,6 +405,7 @@ export default function App() {
 
   return (
     <div className="w-full max-w-lg mx-auto bg-white rounded-3xl shadow-xl border border-[#eee9d5]/30 my-6 relative transition-transform duration-300">
+      
       {/* Header component */}
       <Header />
 
