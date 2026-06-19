@@ -7,8 +7,9 @@ import FooterResumen from "./components/FooterResumen";
 import HistorialPedidos from "./components/HistorialPedidos";
 import { Product, Client, Cart } from "./types";
 
-const URL_DATA = "https://docs.google.com/spreadsheets/d/1pUkyu4Ji4cZYXe0XJ4RghB1p1N3T1cYemZZ4cp8GYmk/gviz/tq?tqx=out:json";
-const CLIENTES_URL = "https://docs.google.com/spreadsheets/d/1odxmYGU1tsPSAbL4DDJg1_bedbn0Fqec/gviz/tq?tqx=out:json&sheet=Hoja 1";
+const SPREADSHEET_ID = "1JOSwLdeQIJC1tG2d2fST-mlXWn-vPo5C80zgJIf6QF0";
+const URL_DATA = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=Productos`;
+const CLIENTES_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=Clientes`;
 
 const STORAGE_KEYS = {
   CART: "bonappetit_carrito",
@@ -69,12 +70,27 @@ export default function App() {
     if (savedName) setNombre(savedName);
     if (savedPhone) setTelefono(savedPhone);
 
-    // Read URL Parameters for routing / pre-fill triggers (e.g. ?cliente=Nombre)
+    // Read URL Parameters for routing / pre-fill triggers (e.g. ?cliente=Nombre, ?c=Nombre, ?=Nombre o ?Nombre)
     try {
-      const params = new URLSearchParams(window.location.search);
-      const urlCliente = params.get("cliente");
-      if (urlCliente) {
-        setNombre(urlCliente);
+      const search = window.location.search;
+      if (search) {
+        const params = new URLSearchParams(search);
+        let urlCliente = params.get("cliente") || params.get("c");
+        
+        if (!urlCliente) {
+          const decodedSearch = decodeURIComponent(search.substring(1)).trim();
+          if (decodedSearch) {
+            if (decodedSearch.startsWith("=")) {
+              urlCliente = decodedSearch.substring(1);
+            } else if (!decodedSearch.includes("&") && !decodedSearch.includes("=")) {
+              urlCliente = decodedSearch;
+            }
+          }
+        }
+
+        if (urlCliente) {
+          setNombre(urlCliente);
+        }
       }
     } catch (e) {
       console.error("Error reading initial client parameter:", e);
@@ -84,19 +100,34 @@ export default function App() {
   // Sync client profile fields with clientesList if URL query parameter is present on load/updates
   useEffect(() => {
     try {
-      const params = new URLSearchParams(window.location.search);
-      const urlCliente = params.get("cliente");
-      if (urlCliente && clientesList.length > 0) {
-        const decodedHost = normalizarParaComparar(urlCliente);
-        const match = clientesList.find(c => {
-          const clientNorm = normalizarParaComparar(c?.cliente || "");
-          return clientNorm === decodedHost;
-        });
-        if (match) {
-          setNombre(match.cliente || "");
-          if (match.telefonos) setTelefono(match.telefonos);
-          if (match.direccion) setDireccion(match.direccion);
-          if (match.contacto) setContacto(match.contacto);
+      const search = window.location.search;
+      if (search && clientesList.length > 0) {
+        const params = new URLSearchParams(search);
+        let urlCliente = params.get("cliente") || params.get("c");
+        
+        if (!urlCliente) {
+          const decodedSearch = decodeURIComponent(search.substring(1)).trim();
+          if (decodedSearch) {
+            if (decodedSearch.startsWith("=")) {
+              urlCliente = decodedSearch.substring(1);
+            } else if (!decodedSearch.includes("&") && !decodedSearch.includes("=")) {
+              urlCliente = decodedSearch;
+            }
+          }
+        }
+
+        if (urlCliente) {
+          const decodedHost = normalizarParaComparar(urlCliente);
+          const match = clientesList.find(c => {
+            const clientNorm = normalizarParaComparar(c?.cliente || "");
+            return clientNorm === decodedHost;
+          });
+          if (match) {
+            setNombre(match.cliente || "");
+            if (match.telefonos) setTelefono(match.telefonos);
+            if (match.direccion) setDireccion(match.direccion);
+            if (match.contacto) setContacto(match.contacto);
+          }
         }
       }
     } catch (e) {
@@ -116,7 +147,7 @@ export default function App() {
   // Silent background sync for clients list to bypass stale cache issues
   const sincronizarClientesEnSegundoPlano = async () => {
     try {
-      const res = await fetch(CLIENTES_URL);
+      const res = await fetch(CLIENTES_URL + "&t=" + Date.now());
       if (res.ok) {
         const text = await res.text();
         const match = text.match(/google\.visualization\.Query\.setResponse\((.+)\)/);
@@ -170,7 +201,7 @@ export default function App() {
     }
 
     try {
-      const res = await fetch(CLIENTES_URL);
+      const res = await fetch(CLIENTES_URL + "&t=" + Date.now());
       if (!res.ok) throw new Error("Network response not OK");
       const text = await res.text();
       const match = text.match(/google\.visualization\.Query\.setResponse\((.+)\)/);
@@ -275,7 +306,7 @@ export default function App() {
     }
 
     try {
-      const res = await fetch(URL_DATA);
+      const res = await fetch(URL_DATA + "&t=" + Date.now());
       if (!res.ok) throw new Error(`HTTP Error Status: ${res.status}`);
       const text = await res.text();
       
@@ -294,7 +325,7 @@ export default function App() {
   // Sincronizar en segundo plano allows users to view cached items instantly while refreshing quietly
   const sincronizarEnSegundoPlano = async () => {
     try {
-      const res = await fetch(URL_DATA);
+      const res = await fetch(URL_DATA + "&t=" + Date.now());
       if (res.ok) {
         const text = await res.text();
         const parsedGroups = parseGoogleSheetProducts(text);
