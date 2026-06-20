@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Bon Appetit - Catálogo de Especias</title>
     
-    <link rel="apple-touch-icon" href="icono.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="icono.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="icono.png">
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./favicon.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="./favicon.png">
+    <link rel="shortcut icon" href="./favicon.ico">
     
     <meta name="theme-color" content="#daa520">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1102,7 +1103,7 @@
         <button class="btn-configuracion" onclick="abrirConfiguracion()" title="Configuración de Google Sheets">
             <i class="fa-solid fa-gear"></i>
         </button>
-        <img src="https://lh3.googleusercontent.com/d/1PM66mFfsBp8P-6UV6h2N91_UgIkAM3Wo" class="logo-insignia" alt="Bon Appetit">
+        <img src="./logo.png" class="logo-insignia" alt="Bon Appetit">
         <p class="header-slogan">Donde el buen provecho es un gran placer.<br>El buen comer, un verdadero gustazo.</p>
     </div>
     <div id="header-spacer" style="height: 0px; transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1);"></div>
@@ -1436,6 +1437,11 @@ function doGet(e) {
         }
         calcularTotal();
         guardarCarrito();
+        
+        // HITO: Que el banner de vendedor desaparezca al agregar el primer producto
+        if (Object.keys(carrito).length > 0) {
+            cerrarBannerVendedor();
+        }
     }
 
     function mostrarBadgeCache(usandoCache) {
@@ -2154,9 +2160,16 @@ function doGet(e) {
     }
 
     // ========== INTEGRACIÓN Y CONTROLADORES DE GOOGLE SHEETS ==========
+    // URL oficial de Google Apps Script para sincronización de pedidos y clientes (v1.0.1)
+    const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx89UetZWurJs50a2sT4Juw1dECa-JsjHuN5LkKzYYJvIu-xSGt69lHAKKG8OoR2D7f/exec';
+
+    function getScriptUrl() {
+        return localStorage.getItem('bonappetit_sheet_script_url') || DEFAULT_SCRIPT_URL;
+    }
+
     function abrirConfiguracion() {
         document.getElementById('modalConfiguracion').style.display = 'flex';
-        const savedUrl = localStorage.getItem('bonappetit_sheet_script_url') || '';
+        const savedUrl = getScriptUrl();
         document.getElementById('txtScriptUrl').value = savedUrl;
     }
 
@@ -2180,7 +2193,7 @@ function doGet(e) {
     }
 
     async function registrarPedidoEnGoogleSheets(nombreCliente) {
-        const urlScript = localStorage.getItem('bonappetit_sheet_script_url');
+        const urlScript = getScriptUrl();
         if (!urlScript) {
             console.log('📝 Google Sheets script URL no configurada.');
             return;
@@ -2220,7 +2233,7 @@ function doGet(e) {
     }
 
     async function registrarClienteEnGoogleSheetsSilencioso(nombre, telefono, direccion, contacto) {
-        const urlScript = localStorage.getItem('bonappetit_sheet_script_url');
+        const urlScript = getScriptUrl();
         if (!urlScript) return;
 
         const dataPayload = {
@@ -2433,7 +2446,7 @@ function doGet(e) {
                 timestamp: new Date().toLocaleString()
             };
 
-            const urlScript = localStorage.getItem('bonappetit_sheet_script_url');
+            const urlScript = getScriptUrl();
 
             if (!urlScript) {
                 console.error('❌ Error: No se ha configurado la URL del Script de Google.');
@@ -2512,7 +2525,7 @@ function doGet(e) {
     }
 
     async function registrarClienteEnGoogleSheets() {
-        const urlScript = localStorage.getItem('bonappetit_sheet_script_url');
+        const urlScript = getScriptUrl();
         if (!urlScript) {
             Swal.fire({
                 icon: 'info',
