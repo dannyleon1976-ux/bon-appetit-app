@@ -1313,8 +1313,8 @@
     const STORAGE_KEY = 'bonappetit_carrito';
     const CACHE_KEY = 'bonappetit_productos_cache';
     const CACHE_TIME_KEY = 'bonappetit_cache_time';
-    const CLIENTES_CACHE_KEY = 'bonappetit_clientes_cache';
-    const CLIENTES_CACHE_TIME_KEY = 'bonappetit_clientes_cache_time';
+    const CLIENTES_CACHE_KEY = 'bonappetit_clientes_cache_v2';
+    const CLIENTES_CACHE_TIME_KEY = 'bonappetit_clientes_cache_time_v2';
     const CACHE_DURATION = 3600000;
 
     // --- SAFE STORAGE WRAPPER ---
@@ -1346,13 +1346,15 @@
     }
 
     function normalizarTexto(str) {
-        if (!str) return '';
-        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        if (str === null || str === undefined) return '';
+        const s = String(str);
+        return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     }
 
     function normalizarExtremo(str) {
-        if (!str) return '';
-        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+        if (str === null || str === undefined) return '';
+        const s = String(str);
+        return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
     }
 
     function generarIdProducto(categoria, nombre, precio) {
@@ -1431,7 +1433,7 @@
                     const jsonPuro = JSON.parse(jsonLimpio[1]);
                     const filas = jsonPuro.table.rows;
                     const nuevosClientes = [];
-                    for (let i = 0; i < filas.length; i++) {
+                    for (let i = 1; i < filas.length; i++) {
                         const fila = filas[i];
                         if (!fila || !fila.c) continue;
                         const id = fila.c[0] ? fila.c[0].v : null;
@@ -1449,18 +1451,18 @@
 
                         if (cliente) {
                             nuevosClientes.push({
-                                id: id || '',
-                                cliente: cliente,
-                                rifCedula: rifCedula || '',
-                                direccion: direccion || '',
-                                telefonos: telefonos || '',
-                                contacto: contacto || '',
-                                vendedor: vendedor || '',
-                                condicion: condicion || 'CONTADO',
-                                sector: sector || '',
-                                etiqueta: etiqueta || '',
-                                netlifyUrl: netlifyUrl || '',
-                                githubUrl: githubUrl || ''
+                                id: id !== null && id !== undefined ? String(id).trim() : '',
+                                cliente: cliente !== null && cliente !== undefined ? String(cliente).trim() : '',
+                                rifCedula: rifCedula !== null && rifCedula !== undefined ? String(rifCedula).trim() : '',
+                                direccion: direccion !== null && direccion !== undefined ? String(direccion).trim() : '',
+                                telefonos: telefonos !== null && telefonos !== undefined ? String(telefonos).trim() : '',
+                                contacto: contacto !== null && contacto !== undefined ? String(contacto).trim() : '',
+                                vendedor: vendedor !== null && vendedor !== undefined ? String(vendedor).trim() : '',
+                                condicion: condicion !== null && condicion !== undefined ? String(condicion).trim() : 'CONTADO',
+                                sector: sector !== null && sector !== undefined ? String(sector).trim() : '',
+                                etiqueta: etiqueta !== null && etiqueta !== undefined ? String(etiqueta).trim() : '',
+                                netlifyUrl: netlifyUrl !== null && netlifyUrl !== undefined ? String(netlifyUrl).trim() : '',
+                                githubUrl: githubUrl !== null && githubUrl !== undefined ? String(githubUrl).trim() : ''
                             });
                         }
                     }
@@ -1496,7 +1498,7 @@
             const jsonPuro = JSON.parse(jsonLimpio[1]);
             const filas = jsonPuro.table.rows;
             listaClientes = [];
-            for (let i = 0; i < filas.length; i++) {
+            for (let i = 1; i < filas.length; i++) {
                 const fila = filas[i];
                 if (!fila || !fila.c) continue;
                 const id = fila.c[0] ? fila.c[0].v : null;
@@ -1514,18 +1516,18 @@
 
                 if (cliente) {
                     listaClientes.push({
-                        id: id || '',
-                        cliente: cliente,
-                        rifCedula: rifCedula || '',
-                        direccion: direccion || '',
-                        telefonos: telefonos || '',
-                        contacto: contacto || '',
-                        vendedor: vendedor || '',
-                        condicion: condicion || 'CONTADO',
-                        sector: sector || '',
-                        etiqueta: etiqueta || '',
-                        netlifyUrl: netlifyUrl || '',
-                        githubUrl: githubUrl || ''
+                        id: id !== null && id !== undefined ? String(id).trim() : '',
+                        cliente: cliente !== null && cliente !== undefined ? String(cliente).trim() : '',
+                        rifCedula: rifCedula !== null && rifCedula !== undefined ? String(rifCedula).trim() : '',
+                        direccion: direccion !== null && direccion !== undefined ? String(direccion).trim() : '',
+                        telefonos: telefonos !== null && telefonos !== undefined ? String(telefonos).trim() : '',
+                        contacto: contacto !== null && contacto !== undefined ? String(contacto).trim() : '',
+                        vendedor: vendedor !== null && vendedor !== undefined ? String(vendedor).trim() : '',
+                        condicion: condicion !== null && condicion !== undefined ? String(condicion).trim() : 'CONTADO',
+                        sector: sector !== null && sector !== undefined ? String(sector).trim() : '',
+                        etiqueta: etiqueta !== null && etiqueta !== undefined ? String(etiqueta).trim() : '',
+                        netlifyUrl: netlifyUrl !== null && netlifyUrl !== undefined ? String(netlifyUrl).trim() : '',
+                        githubUrl: githubUrl !== null && githubUrl !== undefined ? String(githubUrl).trim() : ''
                     });
                 }
             }
