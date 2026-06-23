@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script>
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            if (msg === 'Script error.') return true;
+        };
+        window.addEventListener('error', function(e) {
+            if (e.message === 'Script error.') {
+                e.stopImmediatePropagation();
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        }, true);
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Bon Appetit - Catálogo de Especias</title>
@@ -15,9 +27,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" crossorigin="anonymous"></script>
     <style>
         :root {
             --bg-crema: #fff8eb;
@@ -622,43 +634,97 @@
         .observaciones-field {
             margin-top: 8px;
         }
-        .aux-buttons-container {
+        .panel-acciones {
             display: flex;
             gap: 10px;
-            margin-top: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
-        .btn-limpiar, .btn-restablecer {
+        .btn-panel-accion {
             flex: 1;
-            padding: 12px;
-            border-radius: 30px;
+            min-width: 140px;
+            padding: 12px 16px;
+            border-radius: 12px;
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
-            display: flex;
-            justify-content: center;
+            display: inline-flex;
             align-items: center;
-            gap: 6px;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(220, 38, 38, 0.15);
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+            border: 1px solid transparent;
         }
-        .btn-limpiar {
-            background: #fff5f5;
-            color: #dc2626;
+        .btn-panel-accion:active {
+            transform: scale(0.97);
         }
-        .btn-limpiar:hover {
-            background: #fee2e2;
+        .btn-panel-historial {
+            background: #fffdf9;
+            color: #3e2723;
+            border-color: rgba(218, 165, 32, 0.3);
+            box-shadow: 0 4px 12px rgba(62, 39, 35, 0.03);
+        }
+        .btn-panel-historial:hover {
+            background: #fdf6e2;
+            border-color: var(--dorado);
+            box-shadow: 0 6px 16px rgba(218, 165, 32, 0.12);
+        }
+        .btn-panel-limpiar {
+            background: #fffdf9;
+            color: #3e2723;
+            border-color: rgba(218, 165, 32, 0.3);
+            box-shadow: 0 4px 12px rgba(62, 39, 35, 0.03);
+        }
+        .btn-panel-limpiar:hover {
+            background: #fdf6e2;
+            border-color: var(--dorado);
+            box-shadow: 0 6px 16px rgba(218, 165, 32, 0.12);
+        }
+        .btn-panel-restablecer {
+            background: #fff1f0;
+            color: #cf1322;
+            border-color: #ffa39e;
+            box-shadow: 0 4px 12px rgba(207, 19, 34, 0.03);
+        }
+        .btn-panel-restablecer:hover {
+            background: #ffe2e0;
+            border-color: #f5222d;
+            box-shadow: 0 6px 16px rgba(207, 19, 34, 0.1);
+        }
+        
+        /* Estilos específicos para las tarjetas de historial de pedidos */
+        .order-card {
+            background: #fffdf9;
+            border: 1px solid rgba(218, 165, 32, 0.22);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 12px rgba(62, 39, 35, 0.02);
+            transition: all 0.2s ease;
+        }
+        .order-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+            box-shadow: 0 6px 18px rgba(62, 39, 35, 0.05);
+            border-color: rgba(218, 165, 32, 0.4);
         }
-        .btn-restablecer {
-            background: #fafaf9;
-            color: #44403c;
-            border-color: #e7e5e4;
+        .btn-order-action {
+            transition: all 0.2s;
         }
-        .btn-restablecer:hover {
-            background: #f5f5f4;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(68, 64, 60, 0.05);
+        .btn-order-action:hover {
+            transform: translateY(-1px);
+        }
+        .btn-order-action:active {
+            transform: translateY(0) scale(0.98);
+        }
+        .btn-order-action-delete {
+            transition: all 0.2s;
+        }
+        .btn-order-action-delete:hover {
+            background: #fee2e2 !important;
+            border-color: #f5222d !important;
+            color: #f5222d !important;
+            transform: translateY(-1px);
         }
         
         /* Contenedor flotante de WhatsApp */
@@ -1152,6 +1218,7 @@
             </div>
             </div>
         </div>
+
         <div class="search-container">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" id="txtBuscar" placeholder="Buscar especia, condimento o hierba..." disabled>
@@ -1165,16 +1232,19 @@
         </div>
     </div>
     <div class="footer-resumen">
-        <div class="total-box">
+        <div class="total-box" style="margin-bottom: 14px;">
             <span><i class="fa-regular fa-credit-card"></i> Total Estimado:</span>
             <div class="monto">$<span id="lblTotal">0.00</span></div>
         </div>
-        <div class="aux-buttons-container">
-            <button class="btn-limpiar" onclick="limpiarFormulario()">
-                <i class="fa-regular fa-trash-can"></i> Limpiar Todo
+        <div class="panel-acciones" style="margin-bottom: 0;">
+            <button class="btn-panel-accion btn-panel-historial" onclick="abrirHistorial()" title="Ver historial de pedidos de este navegador">
+                <i class="fa-solid fa-clock-rotate-left" style="color: #daa520;"></i> Historial
             </button>
-            <button class="btn-restablecer" onclick="restablecerAplicacion()">
-                <i class="fa-solid fa-arrow-rotate-left"></i> Restablecer App
+            <button class="btn-panel-accion btn-panel-limpiar" onclick="limpiarFormulario()" title="Limpiar los campos del formulario y el carrito">
+                <i class="fa-regular fa-trash-can" style="color: #6d4c41;"></i> Limpiar Todo
+            </button>
+            <button class="btn-panel-accion btn-panel-restablecer" onclick="restablecerAplicacion()" title="Borrar toda la base de datos local y caché">
+                <i class="fa-solid fa-arrow-rotate-left" style="color: #e53935;"></i> Restablecer App
             </button>
         </div>
     </div>
@@ -1199,146 +1269,25 @@
                 <span class="input-help">Pega aquí la URL de la web app obtenida al hacer clic en "Implementar > Gestionar implementaciones (o Nueva implementación)" del panel de Google Apps Script. Cada pedido se insertará en tiempo real.</span>
             </div>
 
-            <div class="code-section">
-                <div class="code-header">
-                    <span><i class="fa-solid fa-code"></i> Tu Estructura de Apps Script de Referencia</span>
-                    <button class="btn-copy-code" onclick="copiarCodigoAppsScript()"><i class="fa-regular fa-copy"></i> Copiar Código</button>
-                </div>
-                <pre class="code-block" id="appsScriptCode">var SPREADSHEET_ID = "1JOSwLdeQIJC1tG2d2fST-mlXWn-vPo5C80zgJIf6QF0";
 
-function doPost(e) {
-  try {
-    var data = JSON.parse(e.postData.contents);
-    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    var fechaActual = new Date();
-    var fechaFormateada = Utilities.formatDate(fechaActual, Session.getScriptTimeZone(), "dd/MM/yyyy");
-    var horaFormateada = Utilities.formatDate(fechaActual, Session.getScriptTimeZone(), "hh:mm:ss a");
-    var action = data.action || "";
-    
-    if (action === "save_order") {
-      var sheet = ss.getSheetByName("Pedido");
-      if (!sheet) { sheet = ss.insertSheet("Pedido"); }
-      if (sheet.getLastRow() === 0) {
-        sheet.appendRow(["Fecha", "Hora", "Cliente", "Productos", "Cantidad", "Precio Unitario", "Total"]);
-        sheet.getRange(1, 1, 1, 7).setFontWeight("bold").setBackground("#F3F3F3");
-      }
-      var cliente = data.cliente || "Cliente Sin Nombre";
-      var items = data.items || [];
-      for (var i = 0; i &lt; items.length; i++) {
-        var item = items[i];
-        sheet.appendRow([
-          fechaFormateada,
-          horaFormateada,
-          cliente,
-          item.name || "",
-          Number(item.quantity) || 1,
-          Number(item.price) || 0,
-          (Number(item.price) || 0) * (Number(item.quantity) || 1)
-        ]);
-      }
-      return ContentService.createTextOutput(JSON.stringify({"status": "success", "message": "Pedido guardado."}))
-        .setMimeType(ContentService.MimeType.JSON);
-    } else if (action === "save_client" || action === "update_client") {
-      var sheet = ss.getSheetByName("Clientes");
-      if (!sheet) { sheet = ss.insertSheet("Clientes"); }
-      if (sheet.getLastRow() === 0) {
-        sheet.appendRow(["ID", "CLIENTE", "RIF CEDULA", "DIRECCION P REFENCIA", "TELEFONOS", "CONTACTO", "VENDEDOR", "CONDICION", "SECTOR", "ETIQUETA", "ENLACE netlify", "ENLACE github"]);
-        sheet.getRange(1, 1, 1, 12).setFontWeight("bold").setBackground("#D0E1FD");
-      }
-      
-      var idBuscado = data.id || data.idClient || data.row || "";
-      var clienteBuscado = (data.cliente || "").toString().toLowerCase().trim();
-      var foundRow = -1;
-      
-      var dataValues = sheet.getDataRange().getValues();
-      for (var i = 1; i &lt; dataValues.length; i++) {
-        // Buscar por ID (Columna A)
-        if (idBuscado && dataValues[i][0] == idBuscado) {
-          foundRow = i + 1;
-          break;
-        }
-        // Fallback: Buscar por Nombre (Columna B) si el ID no coincide o no se envió
-        if (dataValues[i][1] && dataValues[i][1].toString().toLowerCase().trim() === clienteBuscado) {
-          foundRow = i + 1;
-        }
-      }
-      
-      var rowData = [
-        idBuscado || Utilities.getUuid(),
-        data.cliente || "",
-        data.rif_cedula || "",
-        data.direccion_p_referencia || "",
-        data.telefonos || "",
-        data.contacto || "",
-        data.vendedor || "",
-        data.condicion || "",
-        data.sector || "",
-        data.etiqueta || "",
-        data.netlify_url || "",
-        data.github_url || ""
-      ];
-      
-      if (foundRow > -1) {
-        sheet.getRange(foundRow, 1, 1, 12).setValues([rowData]);
-        return ContentService.createTextOutput(JSON.stringify({"status": "success", "message": "Cliente actualizado."}))
-          .setMimeType(ContentService.MimeType.JSON);
-      } else {
-        sheet.appendRow(rowData);
-        return ContentService.createTextOutput(JSON.stringify({"status": "success", "message": "Cliente registrado."}))
-          .setMimeType(ContentService.MimeType.JSON);
-      }
-    }
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({"status": "error", "message": error.toString()}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+        </div>
+    </div>
+</div>
 
-function doGet(e) {
-  try {
-    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    var action = e.parameter.action || "get_clients";
-    var sheetName = (action === "get_products") ? "Productos" : "Clientes";
-    var sheet = ss.getSheetByName(sheetName);
-    if (!sheet || sheet.getLastRow() &lt;= 1) {
-      return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
-    }
-    var values = sheet.getDataRange().getValues();
-    var headers = values[0];
-    var result = [];
-    for (var i = 1; i &lt; values.length; i++) {
-      var row = values[i];
-      var obj = {};
-      for (var j = 0; j &lt; headers.length; j++) {
-        var key = headers[j].toString().trim().toLowerCase().replace(/ /g,"_").replace(/á/g,"a").replace(/é/g,"e").replace(/í/g,"i").replace(/ó/g,"o").replace(/ú/g,"u");
-        obj[key] = row[j];
-      }
-      result.push(obj);
-    }
-    return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({"status": "error", "message": error.toString()}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}</pre>
-            </div>
-
-            <div class="modal-steps">
-                <h4>Pasos para Configurar:</h4>
-                <ol>
-                    <li>En tu Google Sheets <strong>"Hoja base"</strong>, ve al menú superior: <strong>Extensiones &gt; Apps Script</strong>.</li>
-                    <li>Sustituye todo el código por el código que copiaste arriba.</li>
-                    <li>Haz clic en <strong>Implementar &gt; Nueva implementación</strong> (botón azul superior).</li>
-                    <li>Haz clic en el engranaje de "Seleccionar tipo" y elige <strong>Aplicación web</strong>.</li>
-                    <li>Configura los campos:
-                        <ul>
-                            <li><strong>Descripción</strong>: Sincronización Bon Appetit</li>
-                            <li><strong>Ejecutar como</strong>: Mi ("tu_correo@gmail.com")</li>
-                            <li><strong>Quién tiene acceso</strong>: Cualquier persona (Any)</li>
-                        </ul>
-                    </li>
-                    <li>Haz clic en <strong>Implementar</strong>. Copia la <strong>URL de la Web App</strong> generada y pégala en el campo de arriba de este panel. ¡Listo!</li>
-                </ol>
+<!-- Modal de Historial de Pedidos -->
+<div id="modalHistorial" class="modal-backdrop" style="display: none;">
+    <div class="modal-content" style="max-width: 630px; border-radius: 20px;">
+        <div class="modal-header" style="border-bottom: 1px solid #efebe9; padding-bottom: 14px;">
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 19px; color: #3e2723; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-clock-rotate-left" style="color: #daa520;"></i> Historial de Pedidos Guardados</h3>
+            <button class="btn-close-modal" onclick="cerrarHistorial()" style="font-size: 1.6rem; color: #8d6e63;">&times;</button>
+        </div>
+        <div class="modal-body" style="max-height: 70vh; overflow-y: auto; padding: 20px 10px 10px 10px; margin-top: 5px;">
+            <p class="modal-instructions-intro" style="margin-bottom: 20px; font-size: 13px; color: #7a6f66; line-height: 1.5; border-bottom: 1px dashed rgba(62,39,35,0.1); padding-bottom: 12px; display: flex; align-items: flex-start; gap: 8px;">
+                <i class="fa-solid fa-circle-info" style="color: #daa520; margin-top: 2px; font-size: 14px;"></i>
+                <span>Visualiza tus pedidos anteriores desde este navegador. Tienes opciones para ver el listado de condimentos comprados, reabrir el pedido cargando todos los datos directo al carrito, o borrarlos.</span>
+            </p>
+            <div id="historialContent">
+                <!-- Se poblará dinámicamente vía JavaScript -->
             </div>
         </div>
     </div>
@@ -1368,6 +1317,22 @@ function doGet(e) {
     const CLIENTES_CACHE_TIME_KEY = 'bonappetit_clientes_cache_time';
     const CACHE_DURATION = 3600000;
 
+    // --- SAFE STORAGE WRAPPER ---
+    const safeStorage = {
+        getItem: function(key) {
+            try { return window.localStorage.getItem(key); } catch(e) { return null; }
+        },
+        setItem: function(key, value) {
+            try { window.localStorage.setItem(key, value); } catch(e) { console.warn('localStorage bloqueado', e); }
+        },
+        removeItem: function(key) {
+            try { window.localStorage.removeItem(key); } catch(e) { console.warn('localStorage bloqueado', e); }
+        },
+        clear: function() {
+            try { window.localStorage.clear(); } catch(e) { console.warn('localStorage bloqueado', e); }
+        }
+    };
+
     let carrito = {};
     let totalGeneral = 0;
     let acordeonesAbiertos = new Map();
@@ -1395,11 +1360,11 @@ function doGet(e) {
     }
 
     function guardarCarrito() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(carrito));
+        safeStorage.setItem(STORAGE_KEY, JSON.stringify(carrito));
     }
 
     function cargarCarritoGuardado() {
-        const guardado = localStorage.getItem(STORAGE_KEY);
+        const guardado = safeStorage.getItem(STORAGE_KEY);
         if (guardado) {
             try {
                 carrito = JSON.parse(guardado);
@@ -1461,7 +1426,7 @@ function doGet(e) {
             const respuesta = await fetch(CLIENTES_URL + '&t=' + Date.now());
             if (respuesta.ok) {
                 const texto = await respuesta.text();
-                const jsonLimpio = texto.match(/google\.visualization\.Query\.setResponse\((.+)\)/);
+                const jsonLimpio = texto.match(/google\.visualization\.Query\.setResponse\(([\s\S]+)\)/);
                 if (jsonLimpio) {
                     const jsonPuro = JSON.parse(jsonLimpio[1]);
                     const filas = jsonPuro.table.rows;
@@ -1500,8 +1465,8 @@ function doGet(e) {
                         }
                     }
                     listaClientes = nuevosClientes;
-                    localStorage.setItem(CLIENTES_CACHE_KEY, JSON.stringify(listaClientes));
-                    localStorage.setItem(CLIENTES_CACHE_TIME_KEY, Date.now());
+                    safeStorage.setItem(CLIENTES_CACHE_KEY, JSON.stringify(listaClientes));
+                    safeStorage.setItem(CLIENTES_CACHE_TIME_KEY, Date.now());
                     console.log('✅ Clientes sincronizados en segundo plano:', listaClientes.length);
                     // Actualizar campos si hay parametro cliente en URL para que autocomplete de una vez
                     cargarClienteDesdeURL();
@@ -1513,8 +1478,8 @@ function doGet(e) {
     }
 
     async function cargarClientes() {
-        const cache = localStorage.getItem(CLIENTES_CACHE_KEY);
-        const cacheTime = localStorage.getItem(CLIENTES_CACHE_TIME_KEY);
+        const cache = safeStorage.getItem(CLIENTES_CACHE_KEY);
+        const cacheTime = safeStorage.getItem(CLIENTES_CACHE_TIME_KEY);
         if (cache && cacheTime && (Date.now() - parseInt(cacheTime) < CACHE_DURATION)) {
             listaClientes = JSON.parse(cache);
             console.log('📦 Clientes cargados desde caché:', listaClientes.length);
@@ -1526,7 +1491,7 @@ function doGet(e) {
             const respuesta = await fetch(CLIENTES_URL + '&t=' + Date.now());
             if (!respuesta.ok) throw new Error("Error al cargar clientes");
             const texto = await respuesta.text();
-            const jsonLimpio = texto.match(/google\.visualization\.Query\.setResponse\((.+)\)/);
+            const jsonLimpio = texto.match(/google\.visualization\.Query\.setResponse\(([\s\S]+)\)/);
             if (!jsonLimpio) throw new Error("Formato inválido");
             const jsonPuro = JSON.parse(jsonLimpio[1]);
             const filas = jsonPuro.table.rows;
@@ -1564,8 +1529,8 @@ function doGet(e) {
                     });
                 }
             }
-            localStorage.setItem(CLIENTES_CACHE_KEY, JSON.stringify(listaClientes));
-            localStorage.setItem(CLIENTES_CACHE_TIME_KEY, Date.now());
+            safeStorage.setItem(CLIENTES_CACHE_KEY, JSON.stringify(listaClientes));
+            safeStorage.setItem(CLIENTES_CACHE_TIME_KEY, Date.now());
             console.log('✅ Clientes cargados (inicial):', listaClientes.length);
         } catch (error) {
             console.error("Error al cargar clientes:", error);
@@ -1633,63 +1598,87 @@ function doGet(e) {
 
     // ========== DETECTAR CLIENTE DESDE LA URL ==========
     function cargarClienteDesdeURL() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const clienteParam = urlParams.get('cliente');
-        const telefonoParam = urlParams.get('telefono');
-        const direccionParam = urlParams.get('direccion');
-        const contactoParam = urlParams.get('contacto');
-        
-        let FinalNombre = "";
-        let FinalTelefono = "";
-        
-        if (clienteParam) {
-            const decodedParam = decodeURIComponent(clienteParam).trim();
-            FinalNombre = decodedParam;
-            const inputNombre = document.getElementById('txtNombre');
-            const inputTelefono = document.getElementById('txtTelefono');
-            const inputDireccion = document.getElementById('txtDireccion');
-            const inputContacto = document.getElementById('txtContacto');
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const clienteParam = urlParams.get('cliente');
+            const telefonoParam = urlParams.get('telefono');
+            const direccionParam = urlParams.get('direccion');
+            const contactoParam = urlParams.get('contacto');
             
-            if (inputNombre) {
-                inputNombre.value = decodedParam;
-            }
+            let FinalNombre = "";
+            let FinalTelefono = "";
             
-            const normalizedParam = normalizarExtremo(decodedParam);
-            const match = listaClientes.find(c => normalizarExtremo(c.cliente) === normalizedParam);
-            if (match) {
-                if (inputNombre) inputNombre.value = match.cliente;
-                if (inputTelefono) inputTelefono.value = match.telefonos || '';
-                if (inputDireccion) inputDireccion.value = match.direccion || '';
-                if (inputContacto) inputContacto.value = match.contacto || '';
+            if (clienteParam) {
+                let decodedParam = "";
+                try {
+                    decodedParam = decodeURIComponent(clienteParam).trim();
+                } catch(e) {
+                    decodedParam = clienteParam.trim();
+                }
+                FinalNombre = decodedParam;
+                const inputNombre = document.getElementById('txtNombre');
+                const inputTelefono = document.getElementById('txtTelefono');
+                const inputDireccion = document.getElementById('txtDireccion');
+                const inputContacto = document.getElementById('txtContacto');
                 
-                FinalNombre = match.cliente;
-                FinalTelefono = match.telefonos || '';
+                if (inputNombre) {
+                    inputNombre.value = decodedParam;
+                }
                 
-                // Guardar en localStorage para mantener coherencia
-                localStorage.setItem('bonappetit_nombre', match.cliente);
-                localStorage.setItem('bonappetit_telefono', match.telefonos || '');
-            } else {
-                localStorage.setItem('bonappetit_nombre', decodedParam);
+                const normalizedParam = normalizarExtremo(decodedParam);
+                const match = listaClientes.find(c => normalizarExtremo(c.cliente) === normalizedParam);
+                if (match) {
+                    if (inputNombre) inputNombre.value = match.cliente;
+                    if (inputTelefono) inputTelefono.value = match.telefonos || '';
+                    if (inputDireccion) inputDireccion.value = match.direccion || '';
+                    if (inputContacto) inputContacto.value = match.contacto || '';
+                    
+                    FinalNombre = match.cliente;
+                    FinalTelefono = match.telefonos || '';
+                    
+                    // Guardar en localStorage para mantener coherencia
+                    safeStorage.setItem('bonappetit_nombre', match.cliente);
+                    safeStorage.setItem('bonappetit_telefono', match.telefonos || '');
+                } else {
+                    safeStorage.setItem('bonappetit_nombre', decodedParam);
+                }
+                
+                // Procesar parámetros extra de la URL si se especifican directamente
+                if (telefonoParam) {
+                    let decTel = "";
+                    try {
+                        decTel = decodeURIComponent(telefonoParam).trim();
+                    } catch(e) {
+                        decTel = telefonoParam.trim();
+                    }
+                    if (inputTelefono) inputTelefono.value = decTel;
+                    FinalTelefono = decTel;
+                    safeStorage.setItem('bonappetit_telefono', decTel);
+                }
+                if (direccionParam) {
+                    let decDir = "";
+                    try {
+                        decDir = decodeURIComponent(direccionParam).trim();
+                    } catch(e) {
+                        decDir = direccionParam.trim();
+                    }
+                    if (inputDireccion) inputDireccion.value = decDir;
+                }
+                if (contactoParam) {
+                    let decCont = "";
+                    try {
+                        decCont = decodeURIComponent(contactoParam).trim();
+                    } catch(e) {
+                        decCont = contactoParam.trim();
+                    }
+                    if (inputContacto) inputContacto.value = decCont;
+                }
+                
+                // Mostrar hermoso de una vez el Banner de Utilidades del Vendedor
+                mostrarBannerVendedor(FinalNombre, FinalTelefono);
             }
-            
-            // Procesar parámetros extra de la URL si se especifican directamente
-            if (telefonoParam) {
-                const decTel = decodeURIComponent(telefonoParam).trim();
-                if (inputTelefono) inputTelefono.value = decTel;
-                FinalTelefono = decTel;
-                localStorage.setItem('bonappetit_telefono', decTel);
-            }
-            if (direccionParam) {
-                const decDir = decodeURIComponent(direccionParam).trim();
-                if (inputDireccion) inputDireccion.value = decDir;
-            }
-            if (contactoParam) {
-                const decCont = decodeURIComponent(contactoParam).trim();
-                if (inputContacto) inputContacto.value = decCont;
-            }
-            
-            // Mostrar hermoso de una vez el Banner de Utilidades del Vendedor
-            mostrarBannerVendedor(FinalNombre, FinalTelefono);
+        } catch(err) {
+            console.error("Error al cargar cliente desde URL:", err);
         }
     }
 
@@ -1769,8 +1758,8 @@ function doGet(e) {
         });
 
         // Limpiar el estado o datos cacheados del cliente actual en localStorage
-        localStorage.removeItem('bonappetit_nombre');
-        localStorage.removeItem('bonappetit_telefono');
+        safeStorage.removeItem('bonappetit_nombre');
+        safeStorage.removeItem('bonappetit_telefono');
 
         // Mostrar confirmación hermosa al vendedor
         if (typeof Swal !== 'undefined') {
@@ -1788,8 +1777,8 @@ function doGet(e) {
         const buscador = document.getElementById('txtBuscar');
         if (!contenedor) return;
 
-        const cache = localStorage.getItem(CACHE_KEY);
-        const cacheTime = localStorage.getItem(CACHE_TIME_KEY);
+        const cache = safeStorage.getItem(CACHE_KEY);
+        const cacheTime = safeStorage.getItem(CACHE_TIME_KEY);
         
         if (cache && cacheTime && (Date.now() - parseInt(cacheTime) < CACHE_DURATION)) {
             console.log('📦 Cargando productos desde caché local');
@@ -1822,7 +1811,7 @@ function doGet(e) {
             if (!respuesta.ok) throw new Error("Error en red: " + respuesta.status);
             
             const texto = await respuesta.text();
-            const jsonLimpio = texto.match(/google\.visualization\.Query\.setResponse\((.+)\)/);
+            const jsonLimpio = texto.match(/google\.visualization\.Query\.setResponse\(([\s\S]+)\)/);
             if (!jsonLimpio) throw new Error("Formato de respuesta inválido");
             
             const jsonPuro = JSON.parse(jsonLimpio[1]);
@@ -1872,8 +1861,8 @@ function doGet(e) {
                 return;
             }
 
-            localStorage.setItem(CACHE_KEY, JSON.stringify(productosPorCategoria));
-            localStorage.setItem(CACHE_TIME_KEY, Date.now());
+            safeStorage.setItem(CACHE_KEY, JSON.stringify(productosPorCategoria));
+            safeStorage.setItem(CACHE_TIME_KEY, Date.now());
 
             renderizarAcordeon(productosPorCategoria);
             restaurarEstadosAcordeones();
@@ -1903,7 +1892,7 @@ function doGet(e) {
             if (!respuesta.ok) throw new Error("Error en red");
             
             const texto = await respuesta.text();
-            const jsonLimpio = texto.match(/google\.visualization\.Query\.setResponse\((.+)\)/);
+            const jsonLimpio = texto.match(/google\.visualization\.Query\.setResponse\(([\s\S]+)\)/);
             if (!jsonLimpio) throw new Error("Formato inválido");
             
             const jsonPuro = JSON.parse(jsonLimpio[1]);
@@ -1929,13 +1918,13 @@ function doGet(e) {
                     }
                     productosPorCategoria[categoria].push({
                         nombre: descripcion,
-                        precio: price = precio
+                        precio: precio
                     });
                 }
             }
 
-            localStorage.setItem(CACHE_KEY, JSON.stringify(productosPorCategoria));
-            localStorage.setItem(CACHE_TIME_KEY, Date.now());
+            safeStorage.setItem(CACHE_KEY, JSON.stringify(productosPorCategoria));
+            safeStorage.setItem(CACHE_TIME_KEY, Date.now());
             console.log('🔄 Caché de productos actualizada en segundo plano');
         } catch(e) {
             console.log('Actualización en segundo plano falló:', e);
@@ -2171,6 +2160,22 @@ function doGet(e) {
         
         // Registrar en Google Sheets en segundo plano automáticamente
         registrarPedidoEnGoogleSheets(nombreCliente);
+        
+        // Registrar en el historial de pedidos local del navegador
+        try {
+            guardarPedidoEnHistorial(
+                nombreCliente,
+                telefonoCliente,
+                direccionCliente,
+                contactoCliente,
+                tipoEntrega,
+                observaciones,
+                totalCorrecto,
+                carrito
+            );
+        } catch(e) {
+            console.error("Error al guardar en el historial local:", e);
+        }
         // Ya no se genera el registro del cliente automáticamente al enviar el pedido para evitar escribir/duplicar en la hoja de Clientes.
         // registrarClienteEnGoogleSheetsSilencioso(nombreCliente, telefonoCliente, direccionCliente, contactoCliente);
         
@@ -2192,9 +2197,9 @@ function doGet(e) {
     const OLD_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx89UetZWurJs50a2sT4Juw1dECa-JsjHuN5LkKzYYJvIu-xSGt69lHAKKG8OoR2D7f/exec';
 
     function getScriptUrl() {
-        let savedUrl = localStorage.getItem('bonappetit_sheet_script_url');
+        let savedUrl = safeStorage.getItem('bonappetit_sheet_script_url');
         if (!savedUrl || savedUrl === OLD_SCRIPT_URL) {
-            localStorage.setItem('bonappetit_sheet_script_url', DEFAULT_SCRIPT_URL);
+            safeStorage.setItem('bonappetit_sheet_script_url', DEFAULT_SCRIPT_URL);
             return DEFAULT_SCRIPT_URL;
         }
         return savedUrl;
@@ -2212,7 +2217,7 @@ function doGet(e) {
 
     function guardarScriptUrl() {
         const url = document.getElementById('txtScriptUrl').value.trim();
-        localStorage.setItem('bonappetit_sheet_script_url', url);
+        safeStorage.setItem('bonappetit_sheet_script_url', url);
     }
 
     function copiarCodigoAppsScript() {
@@ -2251,7 +2256,7 @@ function doGet(e) {
         try {
             console.log('📤 Transmitiendo pedido a tu Google Sheet...', trackingData);
             // Usamos mode: no-cors para evitar restricciones de preflight CORS en Apps Script
-            fetch(urlScript, {
+            await fetch(urlScript, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -2284,7 +2289,7 @@ function doGet(e) {
 
         try {
             console.log('📤 Transmitiendo datos del cliente en segundo plano...', dataPayload);
-            fetch(urlScript, {
+            await fetch(urlScript, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -2295,7 +2300,7 @@ function doGet(e) {
             
             // Refrescar caché local de clientes después de un ratito
             setTimeout(() => {
-                localStorage.removeItem(CLIENTES_CACHE_KEY);
+                safeStorage.removeItem(CLIENTES_CACHE_KEY);
                 cargarClientes();
             }, 2000);
         } catch (e) {
@@ -2530,15 +2535,15 @@ function doGet(e) {
                 if (txtContacto) txtContacto.value = datos.contacto;
 
                 // Sincronizar con localStorage
-                localStorage.setItem('bonappetit_nombre', datos.cliente);
-                localStorage.setItem('bonappetit_telefono', datos.telefonos);
+                safeStorage.setItem('bonappetit_nombre', datos.cliente);
+                safeStorage.setItem('bonappetit_telefono', datos.telefonos);
 
                 // Refrescar caché de clientes
                 setTimeout(() => {
                     const cacheKey = typeof CLIENTES_CACHE_KEY !== 'undefined' ? CLIENTES_CACHE_KEY : 'bonappetit_clientes_cache';
                     const cacheTimeKey = typeof CLIENTES_CACHE_TIME_KEY !== 'undefined' ? CLIENTES_CACHE_TIME_KEY : 'bonappetit_clientes_cache_time';
-                    localStorage.removeItem(cacheKey);
-                    localStorage.removeItem(cacheTimeKey);
+                    safeStorage.removeItem(cacheKey);
+                    safeStorage.removeItem(cacheTimeKey);
                     if (typeof cargarClientes === 'function') cargarClientes();
                 }, 200);
 
@@ -2599,10 +2604,7 @@ function doGet(e) {
             etiqueta: ""
         };
 
-        const btn = document.getElementById('btnRegistrarClienteSheet');
-        const originalText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+        
 
         try {
             console.log('📤 Transmitiendo datos del cliente a Google Sheets...', dataPayload);
@@ -2627,7 +2629,7 @@ function doGet(e) {
             // Recargar la lista de clientes local de fondo tras un segundo
             setTimeout(() => {
                 const cacheKey = typeof CLIENTES_CACHE_KEY !== 'undefined' ? CLIENTES_CACHE_KEY : 'clientes_cache';
-                localStorage.removeItem(cacheKey);
+                safeStorage.removeItem(cacheKey);
                 if (typeof cargarClientes === 'function') cargarClientes();
             }, 1000);
 
@@ -2692,8 +2694,8 @@ function doGet(e) {
                 if (el) el.value = "";
             });
 
-            localStorage.removeItem('bonappetit_nombre');
-            localStorage.removeItem('bonappetit_telefono');
+            safeStorage.removeItem('bonappetit_nombre');
+            safeStorage.removeItem('bonappetit_telefono');
             
             const todosLosContenidos = document.querySelectorAll('.acordeon-content');
             const todasLasFlechas = document.querySelectorAll('.arrow');
@@ -2730,7 +2732,7 @@ function doGet(e) {
         console.log('⚙️ Intentando restablecer app...');
         if (!window.Swal) {
             if (confirm("¿Restablecer aplicación?")) {
-                localStorage.clear();
+                safeStorage.clear();
                 window.location.reload();
             }
             return;
@@ -2746,10 +2748,309 @@ function doGet(e) {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                localStorage.clear();
+                safeStorage.clear();
                 window.location.reload();
             }
         });
+    }
+
+    // ========== HISTORIAL DE PEDIDOS LOCALES ==========
+    function obtenFechaHoraFormateada(fecha) {
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        const mes = meses[fecha.getMonth()];
+        const anio = fecha.getFullYear();
+        let horas = fecha.getHours();
+        const minutos = String(fecha.getMinutes()).padStart(2, '0');
+        const ampm = horas >= 12 ? 'pm' : 'am';
+        horas = horas % 12;
+        horas = horas ? horas : 12;
+        return `${dia} ${mes} ${anio}, ${horas}:${minutos} ${ampm}`;
+    }
+
+    function guardarPedidoEnHistorial(nombre, telefono, direccion, contacto, delivery, observaciones, total, itemsCarrito) {
+        let historial = [];
+        try {
+            const guardado = safeStorage.getItem('bonappetit_order_history');
+            if (guardado) historial = JSON.parse(guardado);
+        } catch (e) {
+            console.error('Error al parsear historial viejo, reiniciando:', e);
+        }
+        
+        const items = [];
+        for (let key in itemsCarrito) {
+            items.push({
+                nombre: itemsCarrito[key].nombre,
+                cantidad: itemsCarrito[key].cantidad,
+                precio: itemsCarrito[key].precio
+            });
+        }
+        
+        const nuevoPedido = {
+            id: Date.now(),
+            fecha: obtenFechaHoraFormateada(new Date()),
+            cliente: nombre || "Cliente Sin Nombre",
+            telefono: telefono || "",
+            direccion: direccion || "",
+            contacto: contacto || "",
+            delivery: delivery || "Delivery",
+            observaciones: observaciones || "",
+            items: items,
+            total: total
+        };
+        
+        historial.unshift(nuevoPedido);
+        safeStorage.setItem('bonappetit_order_history', JSON.stringify(historial));
+    }
+
+    function abrirHistorial() {
+        document.getElementById('modalHistorial').style.display = 'flex';
+        renderizarHistorial();
+    }
+
+    function cerrarHistorial() {
+        document.getElementById('modalHistorial').style.display = 'none';
+    }
+
+    function renderizarHistorial() {
+        const contenedor = document.getElementById('historialContent');
+        if (!contenedor) return;
+        
+        let historial = [];
+        try {
+            const guardado = safeStorage.getItem('bonappetit_order_history');
+            if (guardado) historial = JSON.parse(guardado);
+        } catch (e) {
+            console.error('Error al cargar historial:', e);
+        }
+        
+        if (historial.length === 0) {
+            contenedor.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px; color: #8e7a72;">
+                    <i class="fa-solid fa-clock-rotate-left" style="font-size: 48px; color: rgba(218, 165, 32, 0.3); margin-bottom: 16px;"></i>
+                    <h4 style="font-family: 'Playfair Display', serif; font-size: 17px; margin-bottom: 8px; color: #3e2723; font-weight: 700;">Sin pedidos en el historial</h4>
+                    <p style="font-size: 13px; max-width: 320px; margin: 0 auto; line-height: 1.5; color: #8a736a;">
+                        Al completar y enviar un pedido por WhatsApp, su información de compra se guardará de forma automática en este panel.
+                    </p>
+                </div>
+            `;
+            return;
+        }
+        
+        let htmlParsed = '';
+        historial.forEach((pedido) => {
+            let labelDelivery = pedido.delivery === 'Delivery' ? '🛵 Delivery' : '🏪 Retiro';
+            let itemLinesHTML = '';
+            
+            pedido.items.forEach(item => {
+                let sub = item.cantidad * item.precio;
+                itemLinesHTML += `
+                    <div style="display: flex; justify-content: space-between; font-size: 12.5px; border-bottom: 1px dotted rgba(62,39,35,0.08); padding: 6px 0; color: #5c433c;">
+                        <span>🌿 ${item.nombre} <b style="color: #b58332;">x${item.cantidad}</b></span>
+                        <span style="font-family: monospace; font-weight: 600;">$${sub.toFixed(2)}</span>
+                    </div>
+                `;
+            });
+            
+            htmlParsed += `
+                <div class="order-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
+                        <div>
+                            <h4 style="margin: 0; font-size: 14px; font-weight: 800; color: #3e2723;">${pedido.cliente}</h4>
+                            <span style="font-size: 11px; color: #8e7a72; font-family: monospace;">📅 ${pedido.fecha}</span>
+                        </div>
+                        <span style="font-size: 11px; font-weight: 700; background: #faf0e0; color: #b8860b; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(218,165,32,0.15);">${labelDelivery}</span>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: #fffcf5; padding: 8px 12px; border-radius: 10px; margin-bottom: 10px; border-left: 3px solid #daa520;">
+                        <span style="font-size: 12px; font-weight: 600; color: #7a6f66;">TOTAL DE COMPRA:</span>
+                        <span style="font-size: 16px; font-weight: 800; color: #3e2723; font-family: 'Playfair Display', serif;">$${pedido.total.toFixed(2)}</span>
+                    </div>
+                    
+                    <!-- Sección colapsable de productos -->
+                    <div id="details-${pedido.id}" style="display: none; background: #faf8f5; border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; border: 1px dashed rgba(62,39,35,0.12);">
+                        <div style="font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #8d6e63; margin-bottom: 6px; border-bottom: 1px solid rgba(62,39,35,0.08); padding-bottom: 4px;">Detalle de especias</div>
+                        ${itemLinesHTML}
+                        ${pedido.observaciones ? `<div style="font-size: 11px; margin-top: 8px; color: #7d665e; font-style: italic; background: #fff5e6; padding: 6px 8px; border-radius: 6px;">📝 Obs: ${pedido.observaciones}</div>` : ''}
+                    </div>
+                    
+                    <!-- Botonera de acciones individuales -->
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button onclick="toggleDetails(${pedido.id})" class="btn-order-action" style="flex: 1; padding: 8.5px 12px; border-radius: 10px; border: 1px solid #efebe9; background: #fff; cursor: pointer; color: #5d4037; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s;">
+                            <i class="fa-solid fa-receipt"></i> Ver Artículos
+                        </button>
+                        <button onclick="cargarPedidoEnCarrito(${pedido.id})" class="btn-order-action" style="flex: 1; padding: 8.5px 12px; border-radius: 10px; border: none; background: linear-gradient(135deg, #d1a153 0%, #b58332 100%); cursor: pointer; color: white; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; box-shadow: 0 2px 6px rgba(181, 131, 50, 0.15);">
+                            <i class="fa-solid fa-cart-arrow-down"></i> Reabrir Pedido
+                        </button>
+                        <button onclick="eliminarPedidoDelHistorial(${pedido.id})" class="btn-order-action-delete" style="padding: 8.5px 12px; border-radius: 10px; border: 1px solid rgba(220, 53, 69, 0.2); background: #fff5f5; cursor: pointer; color: #dc3545; font-size: 12px; font-weight: 705; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" title="Eliminar del Historial">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        contenedor.innerHTML = htmlParsed;
+    }
+
+    function toggleDetails(id) {
+        const div = document.getElementById(`details-${id}`);
+        if (!div) return;
+        div.style.display = div.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function eliminarPedidoDelHistorial(id) {
+        if (!window.Swal) {
+            if (confirm("¿Eliminar este pedido del historial?")) {
+                let historial = [];
+                try {
+                    const guardado = safeStorage.getItem('bonappetit_order_history');
+                    if (guardado) historial = JSON.parse(guardado);
+                } catch(e) {}
+                historial = historial.filter(p => p.id !== id);
+                safeStorage.setItem('bonappetit_order_history', JSON.stringify(historial));
+                renderizarHistorial();
+            }
+            return;
+        }
+        Swal.fire({
+            title: '¿Eliminar Pedido?',
+            text: "Se borrará este pedido de tu historial de forma permanente.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#cf1322',
+            cancelButtonColor: '#78716c',
+            confirmButtonText: 'Sí, borrar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let historial = [];
+                try {
+                    const guardado = safeStorage.getItem('bonappetit_order_history');
+                    if (guardado) historial = JSON.parse(guardado);
+                } catch(e) {}
+                historial = historial.filter(p => p.id !== id);
+                safeStorage.setItem('bonappetit_order_history', JSON.stringify(historial));
+                renderizarHistorial();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Eliminado',
+                    text: 'El pedido ha sido retirado del historial.',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }
+        });
+    }
+
+    function buscarCategoriaYIdDeEspecia(nombre, precio) {
+        const cache = safeStorage.getItem('bonappetit_productos_cache');
+        if (cache) {
+            try {
+                const productosPorCategoria = JSON.parse(cache);
+                for (let cat in productosPorCategoria) {
+                    const match = productosPorCategoria[cat].find(p => p.nombre.trim() === nombre.trim());
+                    if (match) {
+                        return { 
+                            categoria: cat, 
+                            idSeguro: generarIdProducto(cat, match.nombre, match.precio) 
+                        };
+                    }
+                }
+            } catch(e) {
+                console.error("Error al buscar categoría desde caché", e);
+            }
+        }
+        const catFallback = 'otros';
+        return { 
+            categoria: catFallback, 
+            idSeguro: generarIdProducto(catFallback, nombre, precio) 
+        };
+    }
+
+    function cargarPedidoEnCarrito(id) {
+        let historial = [];
+        try {
+            const guardado = safeStorage.getItem('bonappetit_order_history');
+            if (guardado) historial = JSON.parse(guardado);
+        } catch(e) {}
+        const pedido = historial.find(p => p.id === id);
+        if (!pedido) return;
+        
+        if (Object.keys(carrito).length > 0) {
+            if (!window.Swal) {
+                if (confirm("Tienes productos en tu carrito. ¿Vaciar e importar el pedido anterior?")) {
+                    realizarImportacionDePedido(pedido);
+                }
+                return;
+            }
+            Swal.fire({
+                title: '¿Reemplazar Carrito Actual?',
+                text: "Tienes productos actualmente en tu lista de compra. ¿Deseas vaciar tu carrito actual e importar este pedido anterior?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d1a153',
+                cancelButtonColor: '#78716c',
+                confirmButtonText: 'Sí, importar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    realizarImportacionDePedido(pedido);
+                }
+            });
+        } else {
+            realizarImportacionDePedido(pedido);
+        }
+    }
+
+    function realizarImportacionDePedido(pedido) {
+        carrito = {};
+        
+        // Reset all quantity labels to 0 on UI first
+        document.querySelectorAll('.cantidad-valor').forEach(elem => {
+            elem.innerText = '0';
+        });
+
+        // Cargar campos de cliente
+        document.getElementById('txtNombre').value = pedido.cliente || "";
+        document.getElementById('txtTelefono').value = pedido.telefono || "";
+        document.getElementById('txtDireccion').value = pedido.direccion || "";
+        document.getElementById('txtContacto').value = pedido.contacto || "";
+        document.getElementById('selEntrega').value = pedido.delivery || "Delivery";
+        document.getElementById('txtObservaciones').value = pedido.observaciones || "";
+        
+        // Guardar datos cliente locales
+        safeStorage.setItem('bonappetit_nombre', pedido.cliente || "");
+        safeStorage.setItem('bonappetit_telefono', pedido.telefono || "");
+
+        // Importar ítems
+        pedido.items.forEach(item => {
+            const { idSeguro } = buscarCategoriaYIdDeEspecia(item.nombre, item.precio);
+            carrito[idSeguro] = {
+                nombre: item.nombre,
+                cantidad: item.cantidad,
+                precio: item.precio
+            };
+        });
+        
+        guardarCarrito();
+        calcularTotal();
+        actualizarTodosLosContadores();
+        
+        cerrarHistorial();
+        
+        if (window.Swal) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Pedido Cargado',
+                text: `🛒 El pedido de "${pedido.cliente}" ha sido cargado nuevamente en tu carrito de compras activo.`,
+                confirmButtonColor: '#d1a153'
+            });
+        }
+        
+        if (Object.keys(carrito).length > 0) {
+            cerrarBannerVendedor();
+        }
     }
 
     // Hacer las funciones globales de forma redundante para asegurar su acceso desde el DOM
@@ -2760,6 +3061,11 @@ function doGet(e) {
     window.registrarClienteEnGoogleSheets = registrarClienteEnGoogleSheets;
     window.abrirConfiguracion = typeof abrirConfiguracion !== 'undefined' ? abrirConfiguracion : function() { document.getElementById('modalConfig').style.display = 'flex'; };
     window.cerrarConfiguracion = typeof cerrarConfiguracion !== 'undefined' ? cerrarConfiguracion : function() { document.getElementById('modalConfig').style.display = 'none'; };
+    window.abrirHistorial = abrirHistorial;
+    window.cerrarHistorial = cerrarHistorial;
+    window.toggleDetails = toggleDetails;
+    window.eliminarPedidoDelHistorial = eliminarPedidoDelHistorial;
+    window.cargarPedidoEnCarrito = cargarPedidoEnCarrito;
 
     window.onload = async () => {
         cargarCarritoGuardado();
@@ -2771,16 +3077,22 @@ function doGet(e) {
         if (buscador) {
             buscador.addEventListener('input', filtrarProductos);
         }
-        const nombreGuardado = localStorage.getItem('bonappetit_nombre');
-        const telefonoGuardado = localStorage.getItem('bonappetit_telefono');
-        if (nombreGuardado) document.getElementById('txtNombre').value = nombreGuardado;
-        if (telefonoGuardado) document.getElementById('txtTelefono').value = telefonoGuardado;
-        document.getElementById('txtNombre').addEventListener('change', () => {
-            localStorage.setItem('bonappetit_nombre', document.getElementById('txtNombre').value);
-        });
-        document.getElementById('txtTelefono').addEventListener('change', () => {
-            localStorage.setItem('bonappetit_telefono', document.getElementById('txtTelefono').value);
-        });
+        const nombreGuardado = safeStorage.getItem('bonappetit_nombre');
+        const telefonoGuardado = safeStorage.getItem('bonappetit_telefono');
+        const txtNombre = document.getElementById('txtNombre');
+        const txtTelefono = document.getElementById('txtTelefono');
+        if (nombreGuardado && txtNombre) txtNombre.value = nombreGuardado;
+        if (telefonoGuardado && txtTelefono) txtTelefono.value = telefonoGuardado;
+        if (txtNombre) {
+            txtNombre.addEventListener('change', () => {
+                safeStorage.setItem('bonappetit_nombre', txtNombre.value);
+            });
+        }
+        if (txtTelefono) {
+            txtTelefono.addEventListener('change', () => {
+                safeStorage.setItem('bonappetit_telefono', txtTelefono.value);
+            });
+        }
         
         // NUEVO: Cargar cliente desde URL
         cargarClienteDesdeURL();
