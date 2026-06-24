@@ -137,7 +137,7 @@
             z-index: 100;
             background: linear-gradient(135deg, #fffbf5 0%, #fff5e6 100%);
             margin-bottom: 8px;
-            overflow: hidden;
+            overflow: visible;
             border-top-left-radius: 32px;
             border-top-right-radius: 32px;
             border-bottom-left-radius: 32px;
@@ -1275,16 +1275,30 @@
         cursor: pointer;
         box-shadow: 0 4px 12px rgba(181, 131, 50, 0.2);
     }
+    #update-banner {
+        display: none;
+        background: linear-gradient(135deg, #d1a153 0%, #b58332 100%);
+        color: white;
+        padding: 12px;
+        text-align: center;
+        border-radius: 12px;
+        margin: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 14px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
 </style>
 </head>
 <body>
 <div class="app-container">
     <div id="bannerVendedorContainer"></div>
+    <div id="update-banner" onclick="actualizarApp()">¡Nuevos precios disponibles! actualizar</div>
     <div class="header" style="position: relative;">
         <button class="btn-configuracion" onclick="abrirConfiguracion()" title="Configuración de Google Sheets">
             <i class="fa-solid fa-gear"></i>
         </button>
-        <img src="./logo.png" class="logo-insignia" alt="Bon Appetit">
+        <img src="logo.png" class="logo-insignia" alt="Bon Appetit">
         <p class="header-slogan">Donde el buen provecho es un gran placer.<br>El buen comer, un verdadero gustazo.</p>
     </div>
     <div id="header-spacer" style="height: 0px; transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1);"></div>
@@ -3335,6 +3349,12 @@
     window.cargarPedidoEnCarrito = cargarPedidoEnCarrito;
     window.filtrarPorCategoria = filtrarPorCategoria;
     window.filtrarProductos = filtrarProductos;
+    window.toggleAcordeon = toggleAcordeon;
+    window.cambiarCantidad = cambiarCantidad;
+    window.enviarPedidoWhatsApp = enviarPedidoWhatsApp;
+    window.cerrarBannerVendedor = cerrarBannerVendedor;
+    window.limpiarFormularioBannerVendedor = limpiarFormularioBannerVendedor;
+    window.cargarProductos = cargarProductos;
 
     window.onload = async () => {
         cargarCarritoGuardado();
@@ -3365,6 +3385,7 @@
         
         // NUEVO: Cargar cliente desde URL
         cargarClienteDesdeURL();
+        await checkVersion();
 
         // Alternar clase .scrolled según la posición del scroll para mayor rendimiento en móviles
         const header = document.querySelector('.header');
@@ -3397,6 +3418,28 @@
         // Ejecución inicial por si carga con scroll previo
         updateScroll();
     };
+
+    async function checkVersion() {
+        try {
+            const response = await fetch('/version.json?t=' + Date.now());
+            const data = await response.json();
+            const currentVersion = data.version;
+            const savedVersion = localStorage.getItem('appVersion');
+            if (savedVersion && savedVersion !== currentVersion) {
+                document.getElementById('update-banner').style.display = 'block';
+            } else if (!savedVersion) {
+                localStorage.setItem('appVersion', currentVersion);
+            }
+        } catch (e) { console.error('Error checking version:', e); }
+    }
+
+    function actualizarApp() {
+        fetch('/version.json').then(r => r.json()).then(data => {
+            localStorage.setItem('appVersion', data.version);
+            window.location.reload();
+        });
+    }
+    window.actualizarApp = actualizarApp;
 </script>
     <!-- Modal Formulario Cliente -->
     <div id="modalCliente" class="modal-cliente">
